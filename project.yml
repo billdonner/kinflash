@@ -21,7 +21,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.billdonner.kinflash
         MARKETING_VERSION: "1.0.0"
-        CURRENT_PROJECT_VERSION: "31"
+        CURRENT_PROJECT_VERSION: "32"
         SWIFT_VERSION: "6.0"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         INFOPLIST_KEY_UILaunchScreen_Generation: true
@@ -50,6 +50,8 @@ targets:
       base:
         SWIFT_VERSION: "6.0"
         GENERATE_INFOPLIST_FILE: true
+        DEVELOPMENT_TEAM: NEAY582ME4
+        CODE_SIGN_IDENTITY: "Apple Development"
     dependencies:
       - target: KinFlash
       - package: GRDB
