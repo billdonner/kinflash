@@ -90,12 +90,18 @@ final class DeviceOnlyTests: XCTestCase {
         print("[DeviceTest] Interview response: \(response)")
         print("[DeviceTest] Extracted: \(String(describing: extracted))")
 
-        // The model should either produce a JSON block or a conversational response
         XCTAssertFalse(response.isEmpty, "Response should not be empty")
 
-        // If extracted, verify it looks right
-        if let person = extracted {
-            XCTAssertFalse(person.firstName.isEmpty, "Extracted firstName should not be empty")
+        // Also try manual extraction from the full response (processMessage only returns first)
+        let allExtracted = extractAllJSON(from: response)
+        print("[DeviceTest] processMessage extracted: \(String(describing: extracted))")
+        print("[DeviceTest] Manual extraction found: \(allExtracted.count) person(s)")
+
+        // At least one method should find John Smith
+        let found = extracted ?? allExtracted.first
+        XCTAssertNotNil(found, "Should extract at least one person from 'My name is John Smith'. Raw response: \(response)")
+        if let person = found {
+            XCTAssertFalse(person.firstName.isEmpty, "firstName should not be empty")
             print("[DeviceTest] Extracted person: \(person.firstName) \(person.lastName ?? "")")
         }
     }
@@ -143,7 +149,7 @@ final class DeviceOnlyTests: XCTestCase {
             conversationHistory: history
         )
         print("[DeviceTest] Turn 1 response: \(r1.prefix(200))")
-        if let p = ex1, p.isComplete {
+        if let p = ex1, p.isPersonComplete {
             _ = try service.saveExtractedPerson(p)
         }
         history.append(AIMessage(role: .user, content: "Jane Doe"))
@@ -158,7 +164,7 @@ final class DeviceOnlyTests: XCTestCase {
 
         // Extract all people from turn 2
         let allJSON = extractAllJSON(from: r2)
-        for person in allJSON where person.isComplete {
+        for person in allJSON where person.isPersonComplete {
             _ = try? service.saveExtractedPerson(person)
         }
 

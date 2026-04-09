@@ -9,13 +9,13 @@ struct AttachmentManager: Sendable {
         return docs.appendingPathComponent("kinflash/people")
     }
 
+    /// Adds an attachment atomically: inserts the DB row first, then copies the file.
+    /// If the file copy fails, the DB row is rolled back. If the DB insert fails,
+    /// no file is copied. No orphaned files or dangling rows.
     func addAttachment(personId: UUID, type: AttachmentType, sourceURL: URL, label: String?) throws -> Attachment {
         let filename = UUID().uuidString + "_" + sourceURL.lastPathComponent
         let destDir = directory(for: personId, type: type)
-
-        try FileManager.default.createDirectory(at: destDir, withIntermediateDirectories: true)
         let destURL = destDir.appendingPathComponent(filename)
-        try FileManager.default.copyItem(at: sourceURL, to: destURL)
 
         let now = Date()
         let attachment = Attachment(
@@ -28,8 +28,15 @@ struct AttachmentManager: Sendable {
             updatedAt: now
         )
 
+        // Insert DB row and copy file inside a transaction.
+        // If either fails, both are rolled back.
         try dbQueue.write { db in
             try attachment.insert(db)
+
+            // Copy file after successful insert — if this throws,
+            // GRDB rolls back the transaction automatically.
+            try FileManager.default.createDirectory(at: destDir, withIntermediateDirectories: true)
+            try FileManager.default.copyItem(at: sourceURL, to: destURL)
         }
 
         return attachment

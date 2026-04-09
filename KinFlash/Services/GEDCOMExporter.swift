@@ -64,14 +64,30 @@ struct GEDCOMExporter: Sendable {
             }
 
             for (childId, parents) in childParents {
-                // Try to find an existing family that matches these parents
+                // Find the family whose parents exactly match this child's parents.
+                // For a child with 2 known parents, the family must have both.
+                // For a child with 1 known parent, prefer a family where that parent
+                // appears AND the child has no second known parent (avoid wrong family
+                // in multi-spouse scenarios).
                 var assignedFamily: String?
+                var bestMatchScore = 0
 
                 for (famId, group) in familyGroups {
                     let famParents = Set([group.husbandUUID, group.wifeUUID].compactMap { $0 })
-                    if !famParents.isEmpty && parents.isSubset(of: famParents) {
+                    guard !famParents.isEmpty else { continue }
+
+                    // Exact match: child's parents == family's parents
+                    if parents == famParents {
                         assignedFamily = famId
                         break
+                    }
+
+                    // Partial match: all of child's parents are in this family,
+                    // and the match score is higher than any previous candidate
+                    let overlap = parents.intersection(famParents).count
+                    if overlap == parents.count && overlap > bestMatchScore {
+                        bestMatchScore = overlap
+                        assignedFamily = famId
                     }
                 }
 

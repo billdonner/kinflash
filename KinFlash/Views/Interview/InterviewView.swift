@@ -283,8 +283,8 @@ struct InterviewView: View {
             let allExtracted = extractAllPersonJSON(from: fullResponse)
             print("[Interview] Extracted \(allExtracted.count) person(s) from response")
 
-            for person in allExtracted where person.isComplete {
-                print("[Interview] Saving: \(person.firstName) \(person.lastName ?? "") [rels: \(person.relationships.count)]")
+            for person in allExtracted where person.isPersonComplete {
+                print("[Interview] Saving: \(person.firstName) \(person.lastName ?? "") [rels: \(person.personRelationships.count)]")
                 do {
                     let saved = try service.saveExtractedPerson(person)
                     extractedCount += 1

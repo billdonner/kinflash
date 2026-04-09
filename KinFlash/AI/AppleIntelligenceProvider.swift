@@ -92,18 +92,34 @@ struct AppleIntelligenceProvider: AIProvider {
 
     // MARK: - Prompt Building
 
+    /// Build prompt with context trimming.
+    /// On-device models have small context windows (~4K tokens).
+    /// Keep system prompt + last 6 conversation turns (3 user + 3 assistant).
     private func buildPrompt(from messages: [AIMessage]) -> (instructions: String, userPrompt: String) {
         var systemParts: [String] = []
-        var conversationParts: [String] = []
+        var nonSystemMessages: [AIMessage] = []
 
         for msg in messages {
-            switch msg.role {
-            case .system:
+            if msg.role == .system {
                 systemParts.append(msg.content)
-            case .user:
-                conversationParts.append("User: \(msg.content)")
-            case .assistant:
-                conversationParts.append("Assistant: \(msg.content)")
+            } else {
+                nonSystemMessages.append(msg)
+            }
+        }
+
+        // Keep only the last 6 non-system messages to stay within context window
+        let maxTurns = 6
+        let trimmed = nonSystemMessages.suffix(maxTurns)
+        if nonSystemMessages.count > maxTurns {
+            print("[AI] Context trimmed: \(nonSystemMessages.count) → \(trimmed.count) messages")
+        }
+
+        var conversationParts: [String] = []
+        for msg in trimmed {
+            switch msg.role {
+            case .system: break
+            case .user: conversationParts.append("User: \(msg.content)")
+            case .assistant: conversationParts.append("Assistant: \(msg.content)")
             }
         }
 

@@ -19,7 +19,7 @@ final class AppleIntelligenceInterviewTests: XCTestCase {
         XCTAssertNotNil(person, "Name entry should emit a JSON block")
         XCTAssertEqual(person?.firstName, "John")
         XCTAssertEqual(person?.lastName, "Smith")
-        XCTAssertEqual(person?.isComplete, true)
+        XCTAssertEqual(person?.isPersonComplete, true)
     }
 
     /// Verify that parent names produce JSON blocks with parent relationships.
@@ -41,7 +41,7 @@ final class AppleIntelligenceInterviewTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(people.count, 1, "Should extract at least one parent")
 
         // At least one should have a parent relationship
-        let withRel = people.filter { !$0.relationships.isEmpty }
+        let withRel = people.filter { !$0.personRelationships.isEmpty }
         XCTAssertGreaterThanOrEqual(withRel.count, 1, "At least one parent should have a relationship link")
     }
 
@@ -57,7 +57,7 @@ final class AppleIntelligenceInterviewTests: XCTestCase {
             conversationHistory: []
         )
         XCTAssertNotNil(ex1, "First turn (name) should extract the root person")
-        if let p = ex1, p.isComplete {
+        if let p = ex1, p.isPersonComplete {
             _ = try service.saveExtractedPerson(p)
         }
 
@@ -115,7 +115,7 @@ final class AppleIntelligenceInterviewTests: XCTestCase {
         XCTAssertNotNil(sarah, "Should extract Sarah")
         XCTAssertEqual(sarah?.lastName, "Johnson")
         // Should have a spouse relationship back to John
-        let spouseRel = sarah?.relationships.first { $0.type == "spouse" }
+        let spouseRel = sarah?.personRelationships.first { $0.type == "spouse" }
         XCTAssertNotNil(spouseRel, "Sarah should have a spouse relationship")
     }
 
@@ -171,7 +171,7 @@ final class AppleIntelligenceInterviewTests: XCTestCase {
         let teddy = people.first { $0.firstName == "Teddy" }
         XCTAssertNotNil(teddy)
         // Teddy should be a child of Andrew
-        let childRel = teddy?.relationships.first { $0.type == "child" && $0.personName == "Andrew" }
+        let childRel = teddy?.personRelationships.first { $0.type == "child" && $0.personName == "Andrew" }
         XCTAssertNotNil(childRel, "Teddy should be linked as child of Andrew")
     }
 

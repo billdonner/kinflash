@@ -8,11 +8,16 @@ struct ExtractedPerson: Codable, Sendable {
     let nickname: String?
     let birthYear: Int?
     let birthPlace: String?
-    let isLiving: Bool
+    let isLiving: Bool?         // Optional: model may omit or send null
     let deathYear: Int?
     let gender: String?
-    let relationships: [ExtractedRelationship]
-    let isComplete: Bool
+    let relationships: [ExtractedRelationship]?  // Optional: model may omit
+    let isComplete: Bool?       // Optional: model may omit
+
+    /// Safe accessors with defaults
+    var isPersonComplete: Bool { isComplete ?? true }
+    var livingStatus: Bool { isLiving ?? true }
+    var personRelationships: [ExtractedRelationship] { relationships ?? [] }
 }
 
 struct ExtractedRelationship: Codable, Sendable {
@@ -112,7 +117,7 @@ struct InterviewService: Sendable {
             if let bp = extracted.birthPlace, existing.birthPlace == nil { existing.birthPlace = bp }
             if let dy = extracted.deathYear, existing.deathYear == nil { existing.deathYear = dy }
             if existing.gender == nil || existing.gender == .unknown { existing.gender = gender }
-            existing.isLiving = extracted.isLiving
+            existing.isLiving = extracted.livingStatus
             existing.updatedAt = now
 
             try dbQueue.write { db in
@@ -131,7 +136,7 @@ struct InterviewService: Sendable {
                 birthYear: extracted.birthYear,
                 deathDate: nil,
                 deathYear: extracted.deathYear,
-                isLiving: extracted.isLiving,
+                isLiving: extracted.livingStatus,
                 birthPlace: extracted.birthPlace,
                 gender: gender,
                 notes: nil,
@@ -149,7 +154,7 @@ struct InterviewService: Sendable {
 
         // Process relationships
         let treeService = TreeService(dbQueue: dbQueue)
-        for rel in extracted.relationships {
+        for rel in extracted.personRelationships {
             try linkRelationship(
                 extractedPerson: person,
                 relationship: rel,
