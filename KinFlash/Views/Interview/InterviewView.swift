@@ -255,51 +255,39 @@ struct InterviewView: View {
 
         print("[Interview] User said: \"\(text)\"")
         print("[Interview] Conversation has \(conversationHistory.count) prior messages")
-        print("[Interview] Starting stream...")
-
-        var fullResponse = ""
-        streamingText = ""
 
         do {
-            let stream = service.streamMessage(
+            // Use chat() not chatStream() — the on-device model is fast enough
+            // (<2s) and chat() preserves the system prompt context correctly.
+            // Streaming caused the model to lose instructions and hallucinate.
+            let (fullResponse, firstExtracted) = try await service.processMessage(
                 userMessage: text,
                 conversationHistory: conversationHistory
             )
-
-            var chunkCount = 0
-            for try await chunk in stream {
-                fullResponse += chunk
-                chunkCount += 1
-                streamingText = cleanResponse(fullResponse)
-            }
-            print("[Interview] Stream complete: \(chunkCount) chunks, \(fullResponse.count) chars")
+            print("[Interview] Response: \(fullResponse.count) chars")
             print("[Interview] RAW response: \(fullResponse)")
 
-            // Streaming complete — persist and finalize
             var finalText = cleanResponse(fullResponse)
             if finalText.isEmpty {
-                // Model returned only JSON with no conversational text — add a default
                 finalText = "Got it! Tell me more about your family."
             }
-            streamingText = ""
             let assistantMsg = persistMessage(role: .assistant, content: finalText)
             messages.append(assistantMsg)
             conversationHistory.append(AIMessage(role: .assistant, content: fullResponse))
-            print("[Interview] Assistant response (\(finalText.count) chars displayed): \(finalText.prefix(120))...")
+            print("[Interview] Display: \(finalText.prefix(120))...")
 
-            // Extract ALL person JSON blocks
+            // Extract ALL person JSON blocks from full response
             let allExtracted = extractAllPersonJSON(from: fullResponse)
-            print("[Interview] Extracted \(allExtracted.count) person(s) from response")
+            print("[Interview] Extracted \(allExtracted.count) person(s)")
 
             for person in allExtracted where person.isPersonComplete {
-                print("[Interview] Saving: \(person.firstName) \(person.lastName ?? "") [rels: \(person.personRelationships.count)]")
+                print("[Interview] Saving: \(person.firstName) \(person.lastName ?? "") role:\(person.role ?? "nil")")
                 do {
                     let saved = try service.saveExtractedPerson(person)
                     extractedCount += 1
-                    print("[Interview] Saved as \(saved.id) — \(saved.displayName)")
+                    print("[Interview] Saved \(saved.displayName)")
                     if appState.rootPersonId == nil {
                         appState.setRootPerson(saved.id)
-                        print("[Interview] Set as root person")
                     }
                 } catch {
                     print("[Interview] Save failed: \(error)")
@@ -308,13 +296,12 @@ struct InterviewView: View {
             }
             if !allExtracted.isEmpty {
                 appState.refreshPeople()
-                print("[Interview] Refreshed people list, now \(appState.people.count) total")
+                print("[Interview] Tree now has \(appState.people.count) people")
             }
 
             isLoading = false
         } catch {
             print("[Interview] ERROR: \(error)")
-            streamingText = ""
             isLoading = false
             pendingRetryText = text
             retryErrorDetail = error.localizedDescription
