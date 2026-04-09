@@ -21,6 +21,9 @@ struct InterviewView: View {
     @State private var streamingText = ""
     @State private var conversationHistory: [AIMessage] = []
     @State private var errorMessage: String?
+    @State private var showRetryAlert = false
+    @State private var retryErrorDetail = ""
+    @State private var pendingRetryText: String?
     @State private var extractedCount = 0
     @State private var hasLoadedHistory = false
 
@@ -110,6 +113,21 @@ struct InterviewView: View {
                 loadHistory()
                 hasLoadedHistory = true
             }
+        }
+        .alert("AI Error", isPresented: $showRetryAlert) {
+            Button("Retry") {
+                if let text = pendingRetryText {
+                    isLoading = true
+                    Task { @MainActor in
+                        await processWithAI(text)
+                    }
+                }
+            }
+            Button("Cancel", role: .cancel) {
+                pendingRetryText = nil
+            }
+        } message: {
+            Text(retryErrorDetail)
         }
     }
 
@@ -268,12 +286,11 @@ struct InterviewView: View {
             isLoading = false
         } catch {
             streamingText = ""
-            if !fullResponse.isEmpty {
-                let msg = persistMessage(role: .assistant, content: cleanResponse(fullResponse))
-                messages.append(msg)
-            }
-            errorMessage = error.localizedDescription
             isLoading = false
+            // Show retry dialog instead of falling back
+            pendingRetryText = text
+            retryErrorDetail = error.localizedDescription
+            showRetryAlert = true
         }
     }
 

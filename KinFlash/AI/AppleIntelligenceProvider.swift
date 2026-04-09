@@ -2,17 +2,10 @@ import Foundation
 import FoundationModels
 
 /// Apple Intelligence provider using on-device FoundationModels (iOS 26+).
-/// Falls back to LocalInterviewProvider with a visible warning if FoundationModels fails.
+/// Throws on failure — no silent fallback. The UI handles retry.
 struct AppleIntelligenceProvider: AIProvider {
 
-    private let fallback = LocalInterviewProvider()
-    /// On-device models need more time than cloud APIs
-    private let timeoutSeconds: Double = 120
-
     var isAvailable: Bool {
-        // The sandbox XPC error only affects Mac Catalyst DEBUG builds
-        // (development signing). App Store / TestFlight builds get proper
-        // entitlements and FoundationModels works fine.
         #if targetEnvironment(macCatalyst) && DEBUG
         return false
         #else
@@ -22,35 +15,17 @@ struct AppleIntelligenceProvider: AIProvider {
 
     func chat(messages: [AIMessage]) async throws -> String {
         guard isAvailable else {
-            return "[Apple Intelligence is not available on this device. Using basic mode.]\n\n"
-                + (try await fallback.chat(messages: messages))
+            throw AIProviderError.notAvailable
         }
-
-        do {
-            return try await withTimeout(seconds: timeoutSeconds) {
-                let (instructions, userPrompt) = buildPrompt(from: messages)
-                let session = LanguageModelSession(instructions: instructions)
-                let response = try await session.respond(to: userPrompt)
-                return response.content
-            }
-        } catch {
-            return "[Apple Intelligence failed: \(error.localizedDescription). Falling back to basic mode.]\n\n"
-                + (try await fallback.chat(messages: messages))
-        }
+        let (instructions, userPrompt) = buildPrompt(from: messages)
+        let session = LanguageModelSession(instructions: instructions)
+        let response = try await session.respond(to: userPrompt)
+        return response.content
     }
 
     func chatStream(messages: [AIMessage]) -> AsyncThrowingStream<String, Error> {
         guard isAvailable else {
-            return AsyncThrowingStream { continuation in
-                Task {
-                    continuation.yield("[Apple Intelligence is not available on this device. Using basic mode.]\n\n")
-                    do {
-                        let response = try await fallback.chat(messages: messages)
-                        continuation.yield(response)
-                    } catch {}
-                    continuation.finish()
-                }
-            }
+            return AsyncThrowingStream { $0.finish(throwing: AIProviderError.notAvailable) }
         }
 
         return AsyncThrowingStream { continuation in
@@ -58,10 +33,6 @@ struct AppleIntelligenceProvider: AIProvider {
                 do {
                     let (instructions, userPrompt) = buildPrompt(from: messages)
                     let session = LanguageModelSession(instructions: instructions)
-
-                    // No timeout on streaming — let the model finish naturally.
-                    // The initial connection is what can fail (sandbox); once
-                    // streaming starts it will complete.
                     var lastLength = 0
                     let stream = session.streamResponse(to: userPrompt)
                     for try await partial in stream {
@@ -73,18 +44,9 @@ struct AppleIntelligenceProvider: AIProvider {
                         }
                     }
                     continuation.finish()
-                    return
                 } catch {
-                    // FoundationModels failed — warn user, then fall back
-                    continuation.yield("\n\n[Apple Intelligence failed: \(error.localizedDescription). Switching to basic mode.]\n\n")
+                    continuation.finish(throwing: error)
                 }
-
-                // Fallback
-                do {
-                    let localResponse = try await fallback.chat(messages: messages)
-                    continuation.yield(localResponse)
-                } catch {}
-                continuation.finish()
             }
         }
     }
@@ -111,20 +73,5 @@ struct AppleIntelligenceProvider: AIProvider {
         let userPrompt = conversation.isEmpty ? "Hello" : conversation + "\n\nAssistant:"
 
         return (instructions, userPrompt)
-    }
-
-    // MARK: - Timeout (used for non-streaming chat only)
-
-    private func withTimeout<T: Sendable>(seconds: Double, operation: @escaping @Sendable () async throws -> T) async throws -> T {
-        try await withThrowingTaskGroup(of: T.self) { group in
-            group.addTask { try await operation() }
-            group.addTask {
-                try await Task.sleep(for: .seconds(seconds))
-                throw CancellationError()
-            }
-            let result = try await group.next()!
-            group.cancelAll()
-            return result
-        }
     }
 }

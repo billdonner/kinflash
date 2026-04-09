@@ -92,11 +92,13 @@ struct RootView: View {
     @Environment(AppState.self) private var appState
 
     var body: some View {
-        if appState.hasCompletedOnboarding {
-            MainTabView()
-        } else {
-            OnboardingFlow()
-        }
+        MainTabView()
+            .onAppear {
+                // Skip onboarding — the interview tab is always available
+                if !appState.hasCompletedOnboarding {
+                    appState.completeOnboarding()
+                }
+            }
     }
 }
 
