@@ -25,64 +25,58 @@ struct InterviewView: View {
     @State private var hasLoadedHistory = false
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Messages — takes all available space
-            ScrollViewReader { proxy in
-                ScrollView {
-                    LazyVStack(alignment: .leading, spacing: 12) {
-                        ForEach(messages) { msg in
-                            MessageBubble(message: msg)
-                                .id(msg.id)
-                        }
-
-                        if !streamingText.isEmpty {
-                            MessageBubble(message: InterviewMessage(
-                                id: UUID(), role: .assistant, content: streamingText, createdAt: Date()
-                            ))
-                            .id("streaming")
-                        }
-
-                        if isLoading && streamingText.isEmpty {
-                            HStack {
-                                ProgressView()
-                                Text("Thinking...")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                            .padding(.horizontal)
-                        }
+        ScrollViewReader { proxy in
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 12) {
+                    ForEach(messages) { msg in
+                        MessageBubble(message: msg)
+                            .id(msg.id)
                     }
-                    .padding()
-                }
-                .onChange(of: messages.count) {
-                    withAnimation {
-                        proxy.scrollTo(messages.last?.id, anchor: .bottom)
+
+                    if !streamingText.isEmpty {
+                        MessageBubble(message: InterviewMessage(
+                            id: UUID(), role: .assistant, content: streamingText, createdAt: Date()
+                        ))
+                        .id("streaming")
+                    }
+
+                    if isLoading && streamingText.isEmpty {
+                        HStack {
+                            ProgressView()
+                            Text("Thinking...")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.horizontal)
                     }
                 }
+                .padding()
             }
-
-            if let error = errorMessage {
-                Text(error)
-                    .font(.caption)
-                    .foregroundStyle(.red)
-                    .padding(.horizontal)
+            .onChange(of: messages.count) {
+                withAnimation {
+                    proxy.scrollTo(messages.last?.id, anchor: .bottom)
+                }
             }
-
-            // Input bar — pinned to bottom, inside safe area
-            VStack(spacing: 0) {
-                Divider()
-                HStack(spacing: 8) {
+            .safeAreaInset(edge: .bottom) {
+                VStack(spacing: 0) {
+                    if let error = errorMessage {
+                        Text(error)
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 4)
+                    }
+                    Divider()
                     TextField("Type a message...", text: $inputText)
                         .textFieldStyle(.roundedBorder)
                         .submitLabel(.send)
                         .onSubmit(sendMessage)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
                 }
-                .padding(.horizontal)
-                .padding(.vertical, 8)
+                .background(.ultraThinMaterial)
             }
-            .background(.ultraThinMaterial)
         }
-        .frame(maxHeight: .infinity)
         .navigationTitle("Interview")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
