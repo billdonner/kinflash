@@ -2,23 +2,21 @@ import Foundation
 import FoundationModels
 
 /// Apple Intelligence provider using on-device FoundationModels (iOS 26+).
-/// Falls back to LocalInterviewProvider if FoundationModels is unavailable
-/// or fails (e.g., sandbox restrictions on Mac Catalyst).
+/// Falls back to LocalInterviewProvider with a visible warning if FoundationModels fails.
 struct AppleIntelligenceProvider: AIProvider {
 
     private let fallback = LocalInterviewProvider()
 
     var isAvailable: Bool {
-        // Check both API availability and actual model readiness
         SystemLanguageModel.default.isAvailable
     }
 
     func chat(messages: [AIMessage]) async throws -> String {
         guard isAvailable else {
-            return try await fallback.chat(messages: messages)
+            return "[Apple Intelligence is not available on this device. Using basic mode.]\n\n"
+                + (try await fallback.chat(messages: messages))
         }
 
-        // Try Foundation Models with a timeout — falls back on any failure
         do {
             return try await withTimeout(seconds: 15) {
                 let (instructions, userPrompt) = buildPrompt(from: messages)
@@ -27,14 +25,23 @@ struct AppleIntelligenceProvider: AIProvider {
                 return response.content
             }
         } catch {
-            // Sandbox error, timeout, or any FoundationModels failure → use local
-            return try await fallback.chat(messages: messages)
+            return "[Apple Intelligence failed: \(error.localizedDescription). Falling back to basic mode.]\n\n"
+                + (try await fallback.chat(messages: messages))
         }
     }
 
     func chatStream(messages: [AIMessage]) -> AsyncThrowingStream<String, Error> {
         guard isAvailable else {
-            return fallback.chatStream(messages: messages)
+            return AsyncThrowingStream { continuation in
+                Task {
+                    continuation.yield("[Apple Intelligence is not available on this device. Using basic mode.]\n\n")
+                    do {
+                        let response = try await fallback.chat(messages: messages)
+                        continuation.yield(response)
+                    } catch {}
+                    continuation.finish()
+                }
+            }
         }
 
         return AsyncThrowingStream { continuation in
@@ -58,17 +65,16 @@ struct AppleIntelligenceProvider: AIProvider {
                     continuation.finish()
                     return
                 } catch {
-                    // FoundationModels failed (sandbox, timeout, etc.)
+                    // FoundationModels failed — warn user, then fall back
+                    continuation.yield("\n\n[Apple Intelligence failed: \(error.localizedDescription). Switching to basic mode.]\n\n")
                 }
 
-                // Full fallback to local provider
+                // Fallback with visible notice
                 do {
                     let localResponse = try await fallback.chat(messages: messages)
                     continuation.yield(localResponse)
-                    continuation.finish()
-                } catch {
-                    continuation.finish(throwing: error)
-                }
+                } catch {}
+                continuation.finish()
             }
         }
     }
@@ -97,18 +103,15 @@ struct AppleIntelligenceProvider: AIProvider {
         return (instructions, userPrompt)
     }
 
-    // MARK: - Timeout Helper
+    // MARK: - Timeout
 
     private func withTimeout<T: Sendable>(seconds: Double, operation: @escaping @Sendable () async throws -> T) async throws -> T {
         try await withThrowingTaskGroup(of: T.self) { group in
-            group.addTask {
-                try await operation()
-            }
+            group.addTask { try await operation() }
             group.addTask {
                 try await Task.sleep(for: .seconds(seconds))
                 throw CancellationError()
             }
-            // Return whichever finishes first
             let result = try await group.next()!
             group.cancelAll()
             return result
