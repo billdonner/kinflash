@@ -333,13 +333,23 @@ struct InterviewView: View {
             let jsonStr = String(text[range]).trimmingCharacters(in: .whitespacesAndNewlines)
             guard let data = jsonStr.data(using: .utf8) else { continue }
 
-            // Try single object first
+            // Try single object
             if let person = try? JSONDecoder().decode(ExtractedPerson.self, from: data) {
                 results.append(person)
             }
-            // Try array of objects (model sometimes wraps in [...])
+            // Try JSON array [{...}, {...}]
             else if let people = try? JSONDecoder().decode([ExtractedPerson].self, from: data) {
                 results.append(contentsOf: people)
+            }
+            // Try JSON Lines: multiple objects on separate lines (no array brackets)
+            else {
+                for line in jsonStr.components(separatedBy: .newlines) {
+                    let trimmed = line.trimmingCharacters(in: .whitespaces)
+                    guard trimmed.hasPrefix("{"), let lineData = trimmed.data(using: .utf8) else { continue }
+                    if let person = try? JSONDecoder().decode(ExtractedPerson.self, from: lineData) {
+                        results.append(person)
+                    }
+                }
             }
         }
         return results

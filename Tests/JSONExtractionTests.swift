@@ -93,6 +93,24 @@ final class JSONExtractionTests: XCTestCase {
         XCTAssertEqual(people.count, 0)
     }
 
+    func testExtractJSONLines() {
+        // Model puts multiple objects on separate lines without array brackets
+        let text = """
+        Got it!
+
+        ```json
+        {"firstName":"Adam","lastName":"Smith","role":"parent"}
+        {"firstName":"Eve","lastName":"Smith","role":"parent"}
+        ```
+
+        Anyone else?
+        """
+        let people = extractAll(from: text)
+        XCTAssertEqual(people.count, 2, "Should parse JSON Lines (newline-separated objects)")
+        XCTAssertTrue(people.contains { $0.firstName == "Adam" })
+        XCTAssertTrue(people.contains { $0.firstName == "Eve" })
+    }
+
     func testMixedValidAndInvalidBlocks() {
         let text = """
         ```json
@@ -251,6 +269,15 @@ final class JSONExtractionTests: XCTestCase {
                 results.append(person)
             } else if let people = try? JSONDecoder().decode([ExtractedPerson].self, from: data) {
                 results.append(contentsOf: people)
+            } else {
+                // JSON Lines: multiple objects on separate lines
+                for line in jsonStr.components(separatedBy: .newlines) {
+                    let trimmed = line.trimmingCharacters(in: .whitespaces)
+                    guard trimmed.hasPrefix("{"), let lineData = trimmed.data(using: .utf8) else { continue }
+                    if let person = try? JSONDecoder().decode(ExtractedPerson.self, from: lineData) {
+                        results.append(person)
+                    }
+                }
             }
         }
         return results
