@@ -122,9 +122,22 @@ struct TreeService: Sendable {
         }
     }
 
+    /// Removes a relationship and its reverse (for bidirectional spouse/sibling edges).
     func removeRelationship(id: UUID) throws {
         try dbQueue.write { db in
+            guard let rel = try Relationship.fetchOne(db, key: id) else { return }
+
+            // Delete the primary row
             _ = try Relationship.deleteOne(db, key: id)
+
+            // For bidirectional types, also delete the reverse row
+            if rel.type == .spouse || rel.type == .sibling {
+                try Relationship
+                    .filter(Column("fromPersonId") == rel.toPersonId
+                            && Column("toPersonId") == rel.fromPersonId
+                            && Column("type") == rel.type.rawValue)
+                    .deleteAll(db)
+            }
         }
     }
 

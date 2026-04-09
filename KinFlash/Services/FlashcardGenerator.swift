@@ -32,7 +32,12 @@ struct FlashcardGenerator: Sendable {
             ))
         }
 
-        return cards.sorted { $0.relationshipChain.count < $1.relationshipChain.count }
+        return cards.sorted {
+            // Sort by number of traversal edges (hops), not string length
+            let hops0 = $0.relationshipChain.components(separatedBy: " \u{2192} ").count  // "→" separator
+            let hops1 = $1.relationshipChain.components(separatedBy: " \u{2192} ").count
+            return hops0 < hops1
+        }
     }
 
     /// Save generated flashcards as a deck in the database.

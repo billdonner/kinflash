@@ -6,6 +6,7 @@ struct PersonProfileView: View {
     @Environment(\.dismiss) private var dismiss
     let person: Person
 
+    @State private var currentPerson: Person?
     @State private var relationships: [(label: String, person: Person)] = []
     @State private var photos: [Attachment] = []
     @State private var documents: [Attachment] = []
@@ -14,6 +15,9 @@ struct PersonProfileView: View {
     @State private var showFlashcardGeneration = false
     @State private var showPhotoSheet = false
     @State private var navigateToPerson: Person?
+
+    /// The live version of the person, refreshed after edits.
+    private var displayPerson: Person { currentPerson ?? person }
 
     var body: some View {
         ScrollView {
@@ -31,13 +35,13 @@ struct PersonProfileView: View {
                 documentsSection
 
                 // Notes
-                if let notes = person.notes, !notes.isEmpty {
+                if let notes = displayPerson.notes, !notes.isEmpty {
                     notesSection(notes)
                 }
             }
             .padding()
         }
-        .navigationTitle(person.displayName)
+        .navigationTitle(displayPerson.displayName)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
@@ -56,8 +60,10 @@ struct PersonProfileView: View {
         .onAppear(perform: loadData)
         .sheet(isPresented: $showEditPerson) {
             NavigationStack {
-                PersonEditView(person: person, onSave: {
+                PersonEditView(person: displayPerson, onSave: {
                     appState.refreshPeople()
+                    reloadPerson()
+                    loadData()
                     showEditPerson = false
                 })
             }
@@ -91,29 +97,29 @@ struct PersonProfileView: View {
             }
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(person.displayName)
+                Text(displayPerson.displayName)
                     .font(.title2.bold())
 
-                if let nickname = person.nickname {
+                if let nickname = displayPerson.nickname {
                     Text("\"\(nickname)\"")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
 
-                if let birthDate = person.birthDate {
+                if let birthDate = displayPerson.birthDate {
                     let formatted = birthDate.formatted(date: .long, time: .omitted)
                     HStack(spacing: 4) {
                         Text("Born: \(formatted)")
-                        if let place = person.birthPlace {
+                        if let place = displayPerson.birthPlace {
                             Text("- \(place)")
                         }
                     }
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                } else if let year = person.birthYear {
+                } else if let year = displayPerson.birthYear {
                     HStack(spacing: 4) {
                         Text("Born: \(String(year))")
-                        if let place = person.birthPlace {
+                        if let place = displayPerson.birthPlace {
                             Text("- \(place)")
                         }
                     }
@@ -121,11 +127,11 @@ struct PersonProfileView: View {
                     .foregroundStyle(.secondary)
                 }
 
-                if let deathDate = person.deathDate {
+                if let deathDate = displayPerson.deathDate {
                     Text("Died: \(deathDate.formatted(date: .long, time: .omitted))")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                } else if let deathYear = person.deathYear {
+                } else if let deathYear = displayPerson.deathYear {
                     Text("Died: \(String(deathYear))")
                         .font(.caption)
                         .foregroundStyle(.secondary)
@@ -264,6 +270,11 @@ struct PersonProfileView: View {
     }
 
     // MARK: - Data Loading
+
+    private func reloadPerson() {
+        guard let service = appState.treeService else { return }
+        currentPerson = try? service.fetchPerson(id: person.id)
+    }
 
     private func loadData() {
         guard let db = appState.databaseManager else { return }

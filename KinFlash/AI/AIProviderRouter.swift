@@ -7,21 +7,26 @@ final class AIProviderRouter: Sendable {
         self.keychainManager = keychainManager
     }
 
-    func provider(for selection: String?, model: String?) -> (any AIProvider)? {
+    /// Returns the appropriate AI provider based on user settings.
+    /// Falls back to AppleIntelligenceProvider when no cloud provider is configured.
+    func provider(for selection: String?, model: String?) -> any AIProvider {
         switch selection {
         case "anthropic":
-            guard let key = keychainManager.get(key: "anthropic_api_key"), !key.isEmpty else {
-                return nil
+            if let key = keychainManager.get(key: "anthropic_api_key"), !key.isEmpty {
+                return AnthropicProvider(apiKey: key, model: model ?? "claude-sonnet-4-6")
             }
-            return AnthropicProvider(apiKey: key, model: model ?? "claude-sonnet-4-6")
+            // Invalid key — fall through to default
+            return AppleIntelligenceProvider()
+
         case "openai":
-            guard let key = keychainManager.get(key: "openai_api_key"), !key.isEmpty else {
-                return nil
+            if let key = keychainManager.get(key: "openai_api_key"), !key.isEmpty {
+                return OpenAIProvider(apiKey: key, model: model ?? "gpt-4o")
             }
-            return OpenAIProvider(apiKey: key, model: model ?? "gpt-4o")
+            return AppleIntelligenceProvider()
+
         default:
-            // Apple Intelligence would go here; for now return nil
-            return nil
+            // "apple" or nil — use on-device AI
+            return AppleIntelligenceProvider()
         }
     }
 }

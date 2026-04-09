@@ -22,6 +22,84 @@ struct GEDCOMExporter: Sendable {
                 personToGedcom[person.id] = gedcomId
             }
 
+            // Build family groups from ALL parent-child relationships, not just spouse pairs
+            var familyGroups: [String: MutableFamilyGroup] = [:]
+            var childToFamily: [UUID: String] = [:]  // child → family key
+            var processedSpousePairs = Set<String>()
+
+            // Step 1: Create family groups from spouse pairs
+            let spouseRels = relationships.filter { $0.type == .spouse }
+            for rel in spouseRels {
+                let key = [rel.fromPersonId.uuidString, rel.toPersonId.uuidString].sorted().joined(separator: "-")
+                guard !processedSpousePairs.contains(key) else { continue }
+                processedSpousePairs.insert(key)
+
+                let famId = "@F\(familyGroups.count + 1)@"
+                var group = MutableFamilyGroup()
+
+                let person1 = try Person.fetchOne(db, key: rel.fromPersonId)
+                let person2 = try Person.fetchOne(db, key: rel.toPersonId)
+
+                if person1?.gender == .male {
+                    group.husbandUUID = rel.fromPersonId
+                    group.wifeUUID = rel.toPersonId
+                } else if person2?.gender == .male {
+                    group.husbandUUID = rel.toPersonId
+                    group.wifeUUID = rel.fromPersonId
+                } else {
+                    group.husbandUUID = rel.fromPersonId
+                    group.wifeUUID = rel.toPersonId
+                }
+
+                familyGroups[famId] = group
+            }
+
+            // Step 2: Assign children to families
+            let parentRels = relationships.filter { $0.type == .parent }
+
+            // Group parent relationships by child
+            var childParents: [UUID: Set<UUID>] = [:]
+            for rel in parentRels {
+                childParents[rel.toPersonId, default: []].insert(rel.fromPersonId)
+            }
+
+            for (childId, parents) in childParents {
+                // Try to find an existing family that matches these parents
+                var assignedFamily: String?
+
+                for (famId, group) in familyGroups {
+                    let famParents = Set([group.husbandUUID, group.wifeUUID].compactMap { $0 })
+                    if !famParents.isEmpty && parents.isSubset(of: famParents) {
+                        assignedFamily = famId
+                        break
+                    }
+                }
+
+                if let famId = assignedFamily {
+                    familyGroups[famId]?.childUUIDs.append(childId)
+                    childToFamily[childId] = famId
+                } else {
+                    // No matching family — create a new one for single-parent or unmatched cases
+                    let famId = "@F\(familyGroups.count + 1)@"
+                    var group = MutableFamilyGroup()
+
+                    for parentId in parents {
+                        let parent = try Person.fetchOne(db, key: parentId)
+                        if parent?.gender == .male && group.husbandUUID == nil {
+                            group.husbandUUID = parentId
+                        } else if group.wifeUUID == nil {
+                            group.wifeUUID = parentId
+                        } else if group.husbandUUID == nil {
+                            group.husbandUUID = parentId
+                        }
+                    }
+
+                    group.childUUIDs.append(childId)
+                    familyGroups[famId] = group
+                    childToFamily[childId] = famId
+                }
+            }
+
             // Write INDI records
             for person in people {
                 guard let gedcomId = personToGedcom[person.id] else { continue }
@@ -64,53 +142,29 @@ struct GEDCOMExporter: Sendable {
                 if let notes = person.notes, !notes.isEmpty {
                     output += "1 NOTE \(notes)\n"
                 }
-            }
 
-            // Build FAM records from spouse + parent relationships
-            var familyGroups: [String: GEDCOMFamilyGroup] = [:] // key: sorted spouse pair or single parent
-
-            // Group by spouse pairs
-            let spouseRels = relationships.filter { $0.type == .spouse }
-            var processedSpousePairs = Set<String>()
-
-            for rel in spouseRels {
-                let key = [rel.fromPersonId.uuidString, rel.toPersonId.uuidString].sorted().joined(separator: "-")
-                guard !processedSpousePairs.contains(key) else { continue }
-                processedSpousePairs.insert(key)
-
-                let famId = "@F\(familyGroups.count + 1)@"
-                var group = GEDCOMFamilyGroup()
-
-                // Determine husband/wife by gender
-                let person1 = try Person.fetchOne(db, key: rel.fromPersonId)
-                let person2 = try Person.fetchOne(db, key: rel.toPersonId)
-
-                if person1?.gender == .male {
-                    group.husbandId = personToGedcom[rel.fromPersonId]
-                    group.wifeId = personToGedcom[rel.toPersonId]
-                } else {
-                    group.husbandId = personToGedcom[rel.toPersonId]
-                    group.wifeId = personToGedcom[rel.fromPersonId]
+                // FAMC — families where this person is a child
+                if let famId = childToFamily[person.id] {
+                    output += "1 FAMC \(famId)\n"
                 }
 
-                // Find children of this couple
-                let parentRels1 = relationships.filter { $0.fromPersonId == rel.fromPersonId && $0.type == .parent }
-                let parentRels2 = relationships.filter { $0.fromPersonId == rel.toPersonId && $0.type == .parent }
-                let children1 = Set(parentRels1.map(\.toPersonId))
-                let children2 = Set(parentRels2.map(\.toPersonId))
-                let sharedChildren = children1.intersection(children2)
-
-                group.childIds = sharedChildren.compactMap { personToGedcom[$0] }
-                familyGroups[famId] = group
+                // FAMS — families where this person is a spouse/parent
+                for (famId, group) in familyGroups {
+                    if group.husbandUUID == person.id || group.wifeUUID == person.id {
+                        output += "1 FAMS \(famId)\n"
+                    }
+                }
             }
 
             // Write FAM records
             for (famId, group) in familyGroups.sorted(by: { $0.key < $1.key }) {
                 output += "0 \(famId) FAM\n"
-                if let h = group.husbandId { output += "1 HUSB \(h)\n" }
-                if let w = group.wifeId { output += "1 WIFE \(w)\n" }
-                for childId in group.childIds {
-                    output += "1 CHIL \(childId)\n"
+                if let h = group.husbandUUID, let gid = personToGedcom[h] { output += "1 HUSB \(gid)\n" }
+                if let w = group.wifeUUID, let gid = personToGedcom[w] { output += "1 WIFE \(gid)\n" }
+                for childUUID in group.childUUIDs {
+                    if let gid = personToGedcom[childUUID] {
+                        output += "1 CHIL \(gid)\n"
+                    }
                 }
             }
 
@@ -127,8 +181,8 @@ struct GEDCOMExporter: Sendable {
     }
 }
 
-private struct GEDCOMFamilyGroup {
-    var husbandId: String?
-    var wifeId: String?
-    var childIds: [String] = []
+private struct MutableFamilyGroup {
+    var husbandUUID: UUID?
+    var wifeUUID: UUID?
+    var childUUIDs: [UUID] = []
 }

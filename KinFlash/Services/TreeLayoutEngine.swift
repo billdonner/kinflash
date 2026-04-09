@@ -56,41 +56,53 @@ struct TreeLayoutEngine: Sendable {
             }
         }
 
-        // Assign generations via BFS from root
-        var generationMap: [UUID: Int] = [rootPersonId: 0]
-        var queue: [UUID] = [rootPersonId]
-        var visited = Set<UUID>([rootPersonId])
+        // BFS to assign generations, starting from root then handling disconnected components
+        var generationMap: [UUID: Int] = [:]
+        var visited = Set<UUID>()
 
-        while !queue.isEmpty {
-            let current = queue.removeFirst()
-            let gen = generationMap[current]!
+        // Helper: BFS from a starting node at a given generation
+        func bfsAssignGenerations(startId: UUID, startGen: Int) {
+            guard !visited.contains(startId) else { return }
+            var queue: [UUID] = [startId]
+            visited.insert(startId)
+            generationMap[startId] = startGen
 
-            // Parents are one generation up (negative)
-            for parentId in (childOf[current] ?? []) {
-                if !visited.contains(parentId) {
-                    visited.insert(parentId)
-                    generationMap[parentId] = gen - 1
-                    queue.append(parentId)
+            while !queue.isEmpty {
+                let current = queue.removeFirst()
+                let gen = generationMap[current]!
+
+                for parentId in (childOf[current] ?? []) {
+                    if !visited.contains(parentId) {
+                        visited.insert(parentId)
+                        generationMap[parentId] = gen - 1
+                        queue.append(parentId)
+                    }
+                }
+
+                for childId in (parentOf[current] ?? []) {
+                    if !visited.contains(childId) {
+                        visited.insert(childId)
+                        generationMap[childId] = gen + 1
+                        queue.append(childId)
+                    }
+                }
+
+                for spouseId in (spouseOf[current] ?? []) {
+                    if !visited.contains(spouseId) {
+                        visited.insert(spouseId)
+                        generationMap[spouseId] = gen
+                        queue.append(spouseId)
+                    }
                 }
             }
+        }
 
-            // Children are one generation down (positive)
-            for childId in (parentOf[current] ?? []) {
-                if !visited.contains(childId) {
-                    visited.insert(childId)
-                    generationMap[childId] = gen + 1
-                    queue.append(childId)
-                }
-            }
+        // Primary component: BFS from root
+        bfsAssignGenerations(startId: rootPersonId, startGen: 0)
 
-            // Spouses are same generation
-            for spouseId in (spouseOf[current] ?? []) {
-                if !visited.contains(spouseId) {
-                    visited.insert(spouseId)
-                    generationMap[spouseId] = gen
-                    queue.append(spouseId)
-                }
-            }
+        // Disconnected components: BFS from each unvisited person at generation 0
+        for person in people where !visited.contains(person.id) {
+            bfsAssignGenerations(startId: person.id, startGen: 0)
         }
 
         // Group by generation

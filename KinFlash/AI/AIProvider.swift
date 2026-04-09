@@ -19,10 +19,15 @@ struct AISchema: Sendable {
 protocol AIProvider: Sendable {
     func chat(messages: [AIMessage]) async throws -> String
     func chatStream(messages: [AIMessage]) -> AsyncThrowingStream<String, Error>
+    func structured<T: Decodable & Sendable>(
+        prompt: String,
+        schema: AISchema,
+        as type: T.Type
+    ) async throws -> T
     var isAvailable: Bool { get }
 }
 
-// Default streaming implementation that collects the full response
+// Default implementations
 extension AIProvider {
     func chat(messages: [AIMessage]) async throws -> String {
         var result = ""
@@ -30,6 +35,39 @@ extension AIProvider {
             result += chunk
         }
         return result
+    }
+
+    /// Default structured output: use chat with JSON prompt, then decode.
+    func structured<T: Decodable & Sendable>(
+        prompt: String,
+        schema: AISchema,
+        as type: T.Type
+    ) async throws -> T {
+        let systemMessage = """
+            You must respond with valid JSON matching this schema: \(schema.jsonSchema)
+            Description: \(schema.description)
+            Respond ONLY with the JSON object, no markdown, no explanation.
+            """
+        let messages = [
+            AIMessage(role: .system, content: systemMessage),
+            AIMessage(role: .user, content: prompt)
+        ]
+        let response = try await chat(messages: messages)
+
+        // Strip any markdown code fences
+        let cleaned = response
+            .replacingOccurrences(of: "```json", with: "")
+            .replacingOccurrences(of: "```", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard let data = cleaned.data(using: .utf8) else {
+            throw AIProviderError.invalidResponse
+        }
+        do {
+            return try JSONDecoder().decode(T.self, from: data)
+        } catch {
+            throw AIProviderError.decodingError(error)
+        }
     }
 }
 
