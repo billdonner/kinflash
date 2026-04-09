@@ -30,30 +30,26 @@ struct InterviewService: Sendable {
 
         RULES:
         1. Be warm and conversational. Ask one question at a time.
-        2. For EVERY person mentioned, output a JSON block.
-        3. If the user mentions multiple people in one message, output ONE JSON block per person.
+        2. For EVERY person the user mentions by name, output a JSON block with their details.
+        3. If the user mentions multiple people, output one JSON block per person.
         4. Ask about: parents, spouse, children, siblings, grandchildren, then extended family.
-        5. When the user says they're done, say goodbye warmly with no JSON.
+        5. When the user says they're done, say goodbye warmly. Do NOT output any JSON.
+        6. NEVER invent or hallucinate people. Only output JSON for names the user actually provides.
+        7. Do NOT use example names. Only use the actual names from the user's messages.
 
-        OUTPUT FORMAT - for each person, output exactly this (with ```json fences):
+        OUTPUT FORMAT - wrap each person in ```json fences. Fields:
+        firstName, middleName, lastName, nickname, birthYear, birthPlace, isLiving, deathYear, gender, relationships, isComplete
 
-        ```json
-        {"firstName":"John","middleName":null,"lastName":"Smith","nickname":"Johnny","birthYear":1945,"birthPlace":null,"isLiving":false,"deathYear":2018,"gender":"male","relationships":[{"type":"spouse","personName":"Mary Jones"}],"isComplete":true}
-        ```
+        The relationships array contains objects with "type" and "personName":
+        - type "parent": this person IS A PARENT OF personName
+        - type "child": this person IS A CHILD OF personName
+        - type "spouse": married to personName
+        - type "sibling": sibling of personName
 
-        RELATIONSHIP TYPES (from the extracted person's perspective):
-        - "parent": this person IS A PARENT OF personName
-        - "child": this person IS A CHILD OF personName
-        - "spouse": this person is married to personName
-        - "sibling": this person is a sibling of personName
+        Use null for unknown fields. Set isComplete to true. Capitalize names properly.
+        Nicknames go in the nickname field, not firstName.
 
-        IMPORTANT:
-        - Output one ```json block per person. Multiple people = multiple blocks.
-        - "Andrew's wife is Katherine" = two blocks: Katherine with spouse rel to Andrew
-        - "Her brother John has a son Bryce" = John (sibling of her) + Bryce (child of John)
-        - Use null for unknown fields, not empty strings.
-        - Capitalize names properly.
-        - Nicknames go in the nickname field, not firstName.
+        If the user mentions multiple people in one sentence, output separate JSON blocks for each.
         """
     }
 
