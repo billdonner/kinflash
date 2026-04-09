@@ -1,0 +1,50 @@
+name: KinFlash
+options:
+  bundleIdPrefix: com.billdonner
+  deploymentTarget:
+    iOS: "18.0"
+  xcodeVersion: "16.0"
+  generateEmptyDirectories: true
+
+packages:
+  GRDB:
+    url: https://github.com/groue/GRDB.swift
+    from: "7.4.1"
+
+targets:
+  KinFlash:
+    type: application
+    platform: iOS
+    sources:
+      - KinFlash
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.billdonner.kinflash
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "2"
+        SWIFT_VERSION: "6.0"
+        INFOPLIST_VALUES: >-
+          UILaunchScreen={};
+          UISupportedInterfaceOrientations=UIInterfaceOrientationPortrait;
+          UISupportedInterfaceOrientations~ipad=UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight;
+        SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: true
+        SWIFT_STRICT_CONCURRENCY: complete
+        GENERATE_INFOPLIST_FILE: true
+    dependencies:
+      - package: GRDB
+    scheme:
+      testTargets:
+        - KinFlashTests
+
+  KinFlashTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - Tests
+    settings:
+      base:
+        SWIFT_VERSION: "6.0"
+        GENERATE_INFOPLIST_FILE: true
+    dependencies:
+      - target: KinFlash
+      - package: GRDB

@@ -1,0 +1,663 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0574E4BF0F8B45B58B40284D /* TreeLayoutEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ADCB23D89F8ECDB4C800CB3 /* TreeLayoutEngine.swift */; };
+		12475FE721091D38BCF3D6D0 /* KinFlashApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8FB4E0E6CA772FA94FB362 /* KinFlashApp.swift */; };
+		183D648FA805977F248734B5 /* GEDCOMExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D6F353F0EFBC30EEB1ABBFA /* GEDCOMExporter.swift */; };
+		2D1D67DA3C19BB80A2584251 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE7C7AB23CA490084777FB0 /* DatabaseManager.swift */; };
+		2D98A9D08112D5697E5F2077 /* RelationshipResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B99C892513E73FCB5FCD5C /* RelationshipResolverTests.swift */; };
+		2FBA7E54DEE698067C7FA10D /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 8273D935D05E910304E2D9DB /* GRDB */; };
+		4C15D501FB3B4168F179E0F4 /* FlashcardGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4085A04DED8392B15BB93E91 /* FlashcardGeneratorTests.swift */; };
+		58961E5EF76895C1D7B1E055 /* GEDCOMExporterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BFD098F9AAD95C803A8EFF /* GEDCOMExporterTests.swift */; };
+		6C76E5373E3729B3A906019C /* DatabaseMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C826E18226B5F00316C274 /* DatabaseMigrationTests.swift */; };
+		7C10547F33FEEA6BC55824D1 /* AnthropicProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC9DB2E617C4CFBC1DC0E34 /* AnthropicProvider.swift */; };
+		807FD7AC8FB76B05FCA77AC6 /* AttachmentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FDEED002E2BCC6DD1CACB0 /* AttachmentManager.swift */; };
+		82A6C59DA34FF8AE9D0C5C73 /* InterviewService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48BC4F25601770CBB201F9A3 /* InterviewService.swift */; };
+		87690D0F3D3480F6C7B3FAD6 /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC02AB7B23ACEF2758C4E6B1 /* Attachment.swift */; };
+		9A76CD613C95B8596AE1ABB4 /* TreeLayoutEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E8ECB5B5FFA4A4D0AD328A /* TreeLayoutEngineTests.swift */; };
+		9D6323C0F7020098FFE648AC /* OpenAIProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81CF282C435186540D3C2C1 /* OpenAIProvider.swift */; };
+		A0EC9CCED73288A10BEAEBDC /* GEDCOMParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DFD708B0B90F350814A97EF /* GEDCOMParserTests.swift */; };
+		A1057DCE77517D394308D131 /* AIProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3DBCCDA651391E962E2F10 /* AIProvider.swift */; };
+		A34CFB9264EA987BFF12685D /* GEDCOMParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65267A59B66DC2A246C97B2C /* GEDCOMParser.swift */; };
+		A8A315C2FD0A0697D125C5AC /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = D5FDEB0576E00F3FE40918C2 /* GRDB */; };
+		A8DB07B89AF9F8575820B410 /* PDFExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B49270F6891A73066879C9 /* PDFExporter.swift */; };
+		BA40705F5798AFE29CE05177 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0B53CBEC72F5D0AEB8987 /* AppSettings.swift */; };
+		C059B4E10A180B99285161D3 /* DataValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94350573207388045062C5F8 /* DataValidationTests.swift */; };
+		C1FA3221C012619233ADDB05 /* TreeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E473798B99F01F01DDAB55D9 /* TreeService.swift */; };
+		CE10529894703931A45751AA /* Flashcard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E2A2AAFAEC25ECEF6B6A19C /* Flashcard.swift */; };
+		D81E8BD4533EC8DA0DAE2D24 /* FlashcardGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF30266C67CD89D961A3C318 /* FlashcardGenerator.swift */; };
+		DA7698F5E1C3C9ACB1F10A86 /* AIProviderRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4743084B24C5C4821AA20B47 /* AIProviderRouter.swift */; };
+		E89CCFBE1B8994A077921A08 /* Relationship.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DB3761094AF30CF7DD6860 /* Relationship.swift */; };
+		F30031709E985FEBCC7182ED /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E50F3596AB95C5F310C4638 /* KeychainManager.swift */; };
+		F623C751B30FFFEDFA49D64D /* RelationshipResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5A171EF10D7B565D67F43D /* RelationshipResolver.swift */; };
+		F868689827BF9B352E715B5F /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2391A5CD811F4A2E263E4873 /* Person.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		47E8ADB121442CDE50B54B26 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 934C7381B2E550DD35492C65 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3D0743145EDE020956207BC6;
+			remoteInfo = KinFlash;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		02B49270F6891A73066879C9 /* PDFExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFExporter.swift; sourceTree = "<group>"; };
+		05FDEED002E2BCC6DD1CACB0 /* AttachmentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentManager.swift; sourceTree = "<group>"; };
+		0A8FB4E0E6CA772FA94FB362 /* KinFlashApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KinFlashApp.swift; sourceTree = "<group>"; };
+		0E50F3596AB95C5F310C4638 /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
+		11B99C892513E73FCB5FCD5C /* RelationshipResolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelationshipResolverTests.swift; sourceTree = "<group>"; };
+		1CC9DB2E617C4CFBC1DC0E34 /* AnthropicProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnthropicProvider.swift; sourceTree = "<group>"; };
+		2391A5CD811F4A2E263E4873 /* Person.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
+		2E2A2AAFAEC25ECEF6B6A19C /* Flashcard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Flashcard.swift; sourceTree = "<group>"; };
+		31C826E18226B5F00316C274 /* DatabaseMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseMigrationTests.swift; sourceTree = "<group>"; };
+		4085A04DED8392B15BB93E91 /* FlashcardGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashcardGeneratorTests.swift; sourceTree = "<group>"; };
+		44E8ECB5B5FFA4A4D0AD328A /* TreeLayoutEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeLayoutEngineTests.swift; sourceTree = "<group>"; };
+		4743084B24C5C4821AA20B47 /* AIProviderRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIProviderRouter.swift; sourceTree = "<group>"; };
+		48BC4F25601770CBB201F9A3 /* InterviewService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewService.swift; sourceTree = "<group>"; };
+		53B0B53CBEC72F5D0AEB8987 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		55BFD098F9AAD95C803A8EFF /* GEDCOMExporterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GEDCOMExporterTests.swift; sourceTree = "<group>"; };
+		63DB3761094AF30CF7DD6860 /* Relationship.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Relationship.swift; sourceTree = "<group>"; };
+		65267A59B66DC2A246C97B2C /* GEDCOMParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GEDCOMParser.swift; sourceTree = "<group>"; };
+		6DFD708B0B90F350814A97EF /* GEDCOMParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GEDCOMParserTests.swift; sourceTree = "<group>"; };
+		7ADCB23D89F8ECDB4C800CB3 /* TreeLayoutEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeLayoutEngine.swift; sourceTree = "<group>"; };
+		8D6F353F0EFBC30EEB1ABBFA /* GEDCOMExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GEDCOMExporter.swift; sourceTree = "<group>"; };
+		94350573207388045062C5F8 /* DataValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataValidationTests.swift; sourceTree = "<group>"; };
+		9932873C357A7322B0B473D1 /* KinFlash.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = KinFlash.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A81CF282C435186540D3C2C1 /* OpenAIProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIProvider.swift; sourceTree = "<group>"; };
+		AF30266C67CD89D961A3C318 /* FlashcardGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashcardGenerator.swift; sourceTree = "<group>"; };
+		BC02AB7B23ACEF2758C4E6B1 /* Attachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
+		CF5A171EF10D7B565D67F43D /* RelationshipResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelationshipResolver.swift; sourceTree = "<group>"; };
+		D5A9EB7ACED4117488590E13 /* KinFlashTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = KinFlashTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E473798B99F01F01DDAB55D9 /* TreeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeService.swift; sourceTree = "<group>"; };
+		FB3DBCCDA651391E962E2F10 /* AIProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIProvider.swift; sourceTree = "<group>"; };
+		FFE7C7AB23CA490084777FB0 /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		81FA8EAF6DC0877A0F81653B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A8A315C2FD0A0697D125C5AC /* GRDB in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3BBE66E0521708C7F9C560A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2FBA7E54DEE698067C7FA10D /* GRDB in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		04CC7CF450AB40E2F3212702 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9932873C357A7322B0B473D1 /* KinFlash.app */,
+				D5A9EB7ACED4117488590E13 /* KinFlashTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0BCA5F600313BCC296EB65F2 /* Tree */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Tree;
+			sourceTree = "<group>";
+		};
+		0DE7AD0E55DB5C68457B6D5B /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				05FDEED002E2BCC6DD1CACB0 /* AttachmentManager.swift */,
+				AF30266C67CD89D961A3C318 /* FlashcardGenerator.swift */,
+				8D6F353F0EFBC30EEB1ABBFA /* GEDCOMExporter.swift */,
+				65267A59B66DC2A246C97B2C /* GEDCOMParser.swift */,
+				48BC4F25601770CBB201F9A3 /* InterviewService.swift */,
+				CF5A171EF10D7B565D67F43D /* RelationshipResolver.swift */,
+				7ADCB23D89F8ECDB4C800CB3 /* TreeLayoutEngine.swift */,
+				E473798B99F01F01DDAB55D9 /* TreeService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		2CD798734E57C3A57776525B /* Database */ = {
+			isa = PBXGroup;
+			children = (
+				FFE7C7AB23CA490084777FB0 /* DatabaseManager.swift */,
+				446F692BA086640BB77CC206 /* Migrations */,
+			);
+			path = Database;
+			sourceTree = "<group>";
+		};
+		446F692BA086640BB77CC206 /* Migrations */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Migrations;
+			sourceTree = "<group>";
+		};
+		6831C42B501E12A265925CE8 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				0A8FB4E0E6CA772FA94FB362 /* KinFlashApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		6C9C367C591E32395598B38C /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				31C826E18226B5F00316C274 /* DatabaseMigrationTests.swift */,
+				94350573207388045062C5F8 /* DataValidationTests.swift */,
+				4085A04DED8392B15BB93E91 /* FlashcardGeneratorTests.swift */,
+				55BFD098F9AAD95C803A8EFF /* GEDCOMExporterTests.swift */,
+				6DFD708B0B90F350814A97EF /* GEDCOMParserTests.swift */,
+				11B99C892513E73FCB5FCD5C /* RelationshipResolverTests.swift */,
+				44E8ECB5B5FFA4A4D0AD328A /* TreeLayoutEngineTests.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		7D4A0AFFDBC8662C45980EB8 /* Interview */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Interview;
+			sourceTree = "<group>";
+		};
+		9AC1447D8B68CD8B3A43450B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				E9096C7C2B5F5A47F637FE12 /* Flashcards */,
+				7D4A0AFFDBC8662C45980EB8 /* Interview */,
+				E61FAB40FBBDAA7AAA027330 /* Onboarding */,
+				C57411C6BE412A301948DA22 /* Profile */,
+				C811E9E63848B5E77F103F74 /* Settings */,
+				0BCA5F600313BCC296EB65F2 /* Tree */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		A42DC98054505E5A22D61606 /* KinFlash */ = {
+			isa = PBXGroup;
+			children = (
+				E66B70B33FEF72305B992D3C /* AI */,
+				6831C42B501E12A265925CE8 /* App */,
+				2CD798734E57C3A57776525B /* Database */,
+				AB056E0582D9F209FD546628 /* Models */,
+				0DE7AD0E55DB5C68457B6D5B /* Services */,
+				F133BBCD15232269930F05D6 /* Utilities */,
+				9AC1447D8B68CD8B3A43450B /* Views */,
+			);
+			path = KinFlash;
+			sourceTree = "<group>";
+		};
+		A73C3C9B5EA9B55F56B14145 = {
+			isa = PBXGroup;
+			children = (
+				A42DC98054505E5A22D61606 /* KinFlash */,
+				6C9C367C591E32395598B38C /* Tests */,
+				04CC7CF450AB40E2F3212702 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AB056E0582D9F209FD546628 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				53B0B53CBEC72F5D0AEB8987 /* AppSettings.swift */,
+				BC02AB7B23ACEF2758C4E6B1 /* Attachment.swift */,
+				2E2A2AAFAEC25ECEF6B6A19C /* Flashcard.swift */,
+				2391A5CD811F4A2E263E4873 /* Person.swift */,
+				63DB3761094AF30CF7DD6860 /* Relationship.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		C57411C6BE412A301948DA22 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		C811E9E63848B5E77F103F74 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		E61FAB40FBBDAA7AAA027330 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		E66B70B33FEF72305B992D3C /* AI */ = {
+			isa = PBXGroup;
+			children = (
+				FB3DBCCDA651391E962E2F10 /* AIProvider.swift */,
+				4743084B24C5C4821AA20B47 /* AIProviderRouter.swift */,
+				1CC9DB2E617C4CFBC1DC0E34 /* AnthropicProvider.swift */,
+				A81CF282C435186540D3C2C1 /* OpenAIProvider.swift */,
+			);
+			path = AI;
+			sourceTree = "<group>";
+		};
+		E9096C7C2B5F5A47F637FE12 /* Flashcards */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Flashcards;
+			sourceTree = "<group>";
+		};
+		F133BBCD15232269930F05D6 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				0E50F3596AB95C5F310C4638 /* KeychainManager.swift */,
+				02B49270F6891A73066879C9 /* PDFExporter.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3D0743145EDE020956207BC6 /* KinFlash */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FF0DCDD0DC281C33AF8A6C3A /* Build configuration list for PBXNativeTarget "KinFlash" */;
+			buildPhases = (
+				A0FDF3D1C116A93825516C10 /* Sources */,
+				F3BBE66E0521708C7F9C560A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = KinFlash;
+			packageProductDependencies = (
+				8273D935D05E910304E2D9DB /* GRDB */,
+			);
+			productName = KinFlash;
+			productReference = 9932873C357A7322B0B473D1 /* KinFlash.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E4E5DF4E3801A413F8C96C90 /* KinFlashTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8B1B572F5FB194E9251F0DCA /* Build configuration list for PBXNativeTarget "KinFlashTests" */;
+			buildPhases = (
+				3E79D3DCE706EB14D60B8F71 /* Sources */,
+				81FA8EAF6DC0877A0F81653B /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				89881C9249362CF23A3164FC /* PBXTargetDependency */,
+			);
+			name = KinFlashTests;
+			packageProductDependencies = (
+				D5FDEB0576E00F3FE40918C2 /* GRDB */,
+			);
+			productName = KinFlashTests;
+			productReference = D5A9EB7ACED4117488590E13 /* KinFlashTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		934C7381B2E550DD35492C65 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 08E0CEFCB94887D8BD96F42B /* Build configuration list for PBXProject "KinFlash" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = A73C3C9B5EA9B55F56B14145;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				AFBBA5C82A6D2F83DF6F591B /* XCRemoteSwiftPackageReference "GRDB.swift" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 04CC7CF450AB40E2F3212702 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3D0743145EDE020956207BC6 /* KinFlash */,
+				E4E5DF4E3801A413F8C96C90 /* KinFlashTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3E79D3DCE706EB14D60B8F71 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C059B4E10A180B99285161D3 /* DataValidationTests.swift in Sources */,
+				6C76E5373E3729B3A906019C /* DatabaseMigrationTests.swift in Sources */,
+				4C15D501FB3B4168F179E0F4 /* FlashcardGeneratorTests.swift in Sources */,
+				58961E5EF76895C1D7B1E055 /* GEDCOMExporterTests.swift in Sources */,
+				A0EC9CCED73288A10BEAEBDC /* GEDCOMParserTests.swift in Sources */,
+				2D98A9D08112D5697E5F2077 /* RelationshipResolverTests.swift in Sources */,
+				9A76CD613C95B8596AE1ABB4 /* TreeLayoutEngineTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A0FDF3D1C116A93825516C10 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1057DCE77517D394308D131 /* AIProvider.swift in Sources */,
+				DA7698F5E1C3C9ACB1F10A86 /* AIProviderRouter.swift in Sources */,
+				7C10547F33FEEA6BC55824D1 /* AnthropicProvider.swift in Sources */,
+				BA40705F5798AFE29CE05177 /* AppSettings.swift in Sources */,
+				87690D0F3D3480F6C7B3FAD6 /* Attachment.swift in Sources */,
+				807FD7AC8FB76B05FCA77AC6 /* AttachmentManager.swift in Sources */,
+				2D1D67DA3C19BB80A2584251 /* DatabaseManager.swift in Sources */,
+				CE10529894703931A45751AA /* Flashcard.swift in Sources */,
+				D81E8BD4533EC8DA0DAE2D24 /* FlashcardGenerator.swift in Sources */,
+				183D648FA805977F248734B5 /* GEDCOMExporter.swift in Sources */,
+				A34CFB9264EA987BFF12685D /* GEDCOMParser.swift in Sources */,
+				82A6C59DA34FF8AE9D0C5C73 /* InterviewService.swift in Sources */,
+				F30031709E985FEBCC7182ED /* KeychainManager.swift in Sources */,
+				12475FE721091D38BCF3D6D0 /* KinFlashApp.swift in Sources */,
+				9D6323C0F7020098FFE648AC /* OpenAIProvider.swift in Sources */,
+				A8DB07B89AF9F8575820B410 /* PDFExporter.swift in Sources */,
+				F868689827BF9B352E715B5F /* Person.swift in Sources */,
+				E89CCFBE1B8994A077921A08 /* Relationship.swift in Sources */,
+				F623C751B30FFFEDFA49D64D /* RelationshipResolver.swift in Sources */,
+				0574E4BF0F8B45B58B40284D /* TreeLayoutEngine.swift in Sources */,
+				C1FA3221C012619233ADDB05 /* TreeService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		89881C9249362CF23A3164FC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3D0743145EDE020956207BC6 /* KinFlash */;
+			targetProxy = 47E8ADB121442CDE50B54B26 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		01ECC132DE370A6629EAF41C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		14A5EE39EE27419683A5F6F7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.billdonner.KinFlashTests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KinFlash.app/KinFlash";
+			};
+			name = Debug;
+		};
+		581251D19B17071669462243 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_VALUES = "UILaunchScreen={}; UISupportedInterfaceOrientations=UIInterfaceOrientationPortrait; UISupportedInterfaceOrientations~ipad=UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight;";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.billdonner.kinflash;
+				SDKROOT = iphoneos;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		9725965B3C5ABEAB39EF49D8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.billdonner.KinFlashTests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KinFlash.app/KinFlash";
+			};
+			name = Release;
+		};
+		CC1B53B8D56F6C31AD4BF518 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		EA10541433AF95DD4CFFDD9A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_VALUES = "UILaunchScreen={}; UISupportedInterfaceOrientations=UIInterfaceOrientationPortrait; UISupportedInterfaceOrientations~ipad=UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight;";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.billdonner.kinflash;
+				SDKROOT = iphoneos;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		08E0CEFCB94887D8BD96F42B /* Build configuration list for PBXProject "KinFlash" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				01ECC132DE370A6629EAF41C /* Debug */,
+				CC1B53B8D56F6C31AD4BF518 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8B1B572F5FB194E9251F0DCA /* Build configuration list for PBXNativeTarget "KinFlashTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				14A5EE39EE27419683A5F6F7 /* Debug */,
+				9725965B3C5ABEAB39EF49D8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FF0DCDD0DC281C33AF8A6C3A /* Build configuration list for PBXNativeTarget "KinFlash" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EA10541433AF95DD4CFFDD9A /* Debug */,
+				581251D19B17071669462243 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AFBBA5C82A6D2F83DF6F591B /* XCRemoteSwiftPackageReference "GRDB.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/groue/GRDB.swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.4.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		8273D935D05E910304E2D9DB /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AFBBA5C82A6D2F83DF6F591B /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			productName = GRDB;
+		};
+		D5FDEB0576E00F3FE40918C2 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AFBBA5C82A6D2F83DF6F591B /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			productName = GRDB;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 934C7381B2E550DD35492C65 /* Project object */;
+}
