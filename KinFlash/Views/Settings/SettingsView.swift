@@ -53,22 +53,23 @@ struct SettingsView: View {
 
     private var aiProviderSection: some View {
         Section("AI Provider") {
-            Picker("Provider", selection: $selectedProvider) {
+            Picker("Active Provider", selection: $selectedProvider) {
                 Text("Apple Intelligence").tag("apple")
-                Text("Anthropic").tag("anthropic")
-                Text("OpenAI").tag("openai")
+                Text("Anthropic (Claude)").tag("anthropic")
+                Text("OpenAI (GPT)").tag("openai")
             }
             .onChange(of: selectedProvider) { _, newValue in
                 saveProvider(newValue)
             }
 
+            // Anthropic key — always visible so you can enter it anytime
+            SecureField("Anthropic API Key", text: $anthropicKey)
+                .onSubmit { saveAPIKey("anthropic_api_key", value: anthropicKey) }
+                .onChange(of: anthropicKey) { _, newValue in
+                    saveAPIKey("anthropic_api_key", value: newValue)
+                }
             if selectedProvider == "anthropic" {
-                SecureField("API Key", text: $anthropicKey)
-                    .onSubmit { saveAPIKey("anthropic_api_key", value: anthropicKey) }
-                    .onChange(of: anthropicKey) { _, newValue in
-                        saveAPIKey("anthropic_api_key", value: newValue)
-                    }
-                Picker("Model", selection: $anthropicModel) {
+                Picker("Claude Model", selection: $anthropicModel) {
                     ForEach(anthropicModels, id: \.self) { Text($0) }
                 }
                 .onChange(of: anthropicModel) { _, newValue in
@@ -76,13 +77,14 @@ struct SettingsView: View {
                 }
             }
 
+            // OpenAI key — always visible
+            SecureField("OpenAI API Key", text: $openAIKey)
+                .onSubmit { saveAPIKey("openai_api_key", value: openAIKey) }
+                .onChange(of: openAIKey) { _, newValue in
+                    saveAPIKey("openai_api_key", value: newValue)
+                }
             if selectedProvider == "openai" {
-                SecureField("API Key", text: $openAIKey)
-                    .onSubmit { saveAPIKey("openai_api_key", value: openAIKey) }
-                    .onChange(of: openAIKey) { _, newValue in
-                        saveAPIKey("openai_api_key", value: newValue)
-                    }
-                Picker("Model", selection: $openAIModel) {
+                Picker("GPT Model", selection: $openAIModel) {
                     ForEach(openAIModels, id: \.self) { Text($0) }
                 }
                 .onChange(of: openAIModel) { _, newValue in
