@@ -99,6 +99,7 @@
 		53B0B53CBEC72F5D0AEB8987 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		55BFD098F9AAD95C803A8EFF /* GEDCOMExporterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GEDCOMExporterTests.swift; sourceTree = "<group>"; };
 		58ED9F2AC880066F14B68616 /* OnboardingFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlow.swift; sourceTree = "<group>"; };
+		60378625111A9F35D74E7525 /* KinFlash.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KinFlash.entitlements; sourceTree = "<group>"; };
 		63DB3761094AF30CF7DD6860 /* Relationship.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Relationship.swift; sourceTree = "<group>"; };
 		65267A59B66DC2A246C97B2C /* GEDCOMParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GEDCOMParser.swift; sourceTree = "<group>"; };
 		6ADE8CEE31B530388D4F16C2 /* TreeLayoutDisconnectedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeLayoutDisconnectedTests.swift; sourceTree = "<group>"; };
@@ -260,6 +261,7 @@
 			isa = PBXGroup;
 			children = (
 				B25A4AA220F31F95662A7AFE /* Assets.xcassets */,
+				60378625111A9F35D74E7525 /* KinFlash.entitlements */,
 				E66B70B33FEF72305B992D3C /* AI */,
 				6831C42B501E12A265925CE8 /* App */,
 				2CD798734E57C3A57776525B /* Database */,
@@ -607,8 +609,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = KinFlash/KinFlash.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CURRENT_PROJECT_VERSION = 19;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = NEAY582ME4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;
@@ -708,8 +711,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = KinFlash/KinFlash.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CURRENT_PROJECT_VERSION = 19;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = NEAY582ME4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;

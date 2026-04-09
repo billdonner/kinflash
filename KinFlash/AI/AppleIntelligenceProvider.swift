@@ -2,27 +2,39 @@ import Foundation
 import FoundationModels
 
 /// Apple Intelligence provider using on-device FoundationModels (iOS 26+).
-/// Falls back to LocalInterviewProvider if the device doesn't support it.
+/// Falls back to LocalInterviewProvider if FoundationModels is unavailable
+/// or fails (e.g., sandbox restrictions on Mac Catalyst).
 struct AppleIntelligenceProvider: AIProvider {
 
+    private let fallback = LocalInterviewProvider()
+
     var isAvailable: Bool {
+        // Check both API availability and actual model readiness
         SystemLanguageModel.default.isAvailable
     }
 
     func chat(messages: [AIMessage]) async throws -> String {
         guard isAvailable else {
-            return try await LocalInterviewProvider().chat(messages: messages)
+            return try await fallback.chat(messages: messages)
         }
 
-        let (instructions, userPrompt) = buildPrompt(from: messages)
-        let session = LanguageModelSession(instructions: instructions)
-        let response = try await session.respond(to: userPrompt)
-        return response.content
+        // Try Foundation Models with a timeout — falls back on any failure
+        do {
+            return try await withTimeout(seconds: 15) {
+                let (instructions, userPrompt) = buildPrompt(from: messages)
+                let session = LanguageModelSession(instructions: instructions)
+                let response = try await session.respond(to: userPrompt)
+                return response.content
+            }
+        } catch {
+            // Sandbox error, timeout, or any FoundationModels failure → use local
+            return try await fallback.chat(messages: messages)
+        }
     }
 
     func chatStream(messages: [AIMessage]) -> AsyncThrowingStream<String, Error> {
         guard isAvailable else {
-            return LocalInterviewProvider().chatStream(messages: messages)
+            return fallback.chatStream(messages: messages)
         }
 
         return AsyncThrowingStream { continuation in
@@ -31,27 +43,31 @@ struct AppleIntelligenceProvider: AIProvider {
                     let (instructions, userPrompt) = buildPrompt(from: messages)
                     let session = LanguageModelSession(instructions: instructions)
 
-                    var lastLength = 0
-                    let stream = session.streamResponse(to: userPrompt)
-                    for try await partial in stream {
-                        // partial.content is the full response so far; yield the delta
-                        let current = partial.content
-                        if current.count > lastLength {
-                            let delta = String(current.dropFirst(lastLength))
-                            continuation.yield(delta)
-                            lastLength = current.count
+                    try await withTimeout(seconds: 15) {
+                        var lastLength = 0
+                        let stream = session.streamResponse(to: userPrompt)
+                        for try await partial in stream {
+                            let current = partial.content
+                            if current.count > lastLength {
+                                let delta = String(current.dropFirst(lastLength))
+                                continuation.yield(delta)
+                                lastLength = current.count
+                            }
                         }
                     }
                     continuation.finish()
+                    return
                 } catch {
-                    // If FoundationModels fails, fall back to local provider
-                    do {
-                        let fallback = try await LocalInterviewProvider().chat(messages: messages)
-                        continuation.yield(fallback)
-                        continuation.finish()
-                    } catch {
-                        continuation.finish(throwing: error)
-                    }
+                    // FoundationModels failed (sandbox, timeout, etc.)
+                }
+
+                // Full fallback to local provider
+                do {
+                    let localResponse = try await fallback.chat(messages: messages)
+                    continuation.yield(localResponse)
+                    continuation.finish()
+                } catch {
+                    continuation.finish(throwing: error)
                 }
             }
         }
@@ -59,9 +75,6 @@ struct AppleIntelligenceProvider: AIProvider {
 
     // MARK: - Prompt Building
 
-    /// Separate system instructions from the conversation and build the final user prompt.
-    /// FoundationModels uses `Instructions` (system) + a single user string per turn.
-    /// We concatenate the conversation history into the user prompt so the model has context.
     private func buildPrompt(from messages: [AIMessage]) -> (instructions: String, userPrompt: String) {
         var systemParts: [String] = []
         var conversationParts: [String] = []
@@ -82,5 +95,23 @@ struct AppleIntelligenceProvider: AIProvider {
         let userPrompt = conversation.isEmpty ? "Hello" : conversation + "\n\nAssistant:"
 
         return (instructions, userPrompt)
+    }
+
+    // MARK: - Timeout Helper
+
+    private func withTimeout<T: Sendable>(seconds: Double, operation: @escaping @Sendable () async throws -> T) async throws -> T {
+        try await withThrowingTaskGroup(of: T.self) { group in
+            group.addTask {
+                try await operation()
+            }
+            group.addTask {
+                try await Task.sleep(for: .seconds(seconds))
+                throw CancellationError()
+            }
+            // Return whichever finishes first
+            let result = try await group.next()!
+            group.cancelAll()
+            return result
+        }
     }
 }
