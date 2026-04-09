@@ -117,12 +117,22 @@ struct AppleIntelligenceProvider: AIProvider {
             print("[AI] Context trimmed: \(nonSystemMessages.count) → \(trimmed.count) messages")
         }
 
-        // Build the user prompt as just the last user message.
-        // Include brief conversation summary for context, but don't
-        // use "User:"/"Assistant:" prefixes — the model echoes them.
-        let lastUserMsg = trimmed.last { $0.role == .user }?.content ?? "Hello"
+        // Build context summary from prior user messages (names already given)
+        // and the current user message as the prompt.
+        let userMessages = trimmed.filter { $0.role == .user }
+        let lastUserMsg = userMessages.last?.content ?? "Hello"
 
-        let instructions = systemParts.joined(separator: "\n\n")
+        // Summarize prior context for the instructions so the model knows
+        // who the user is and what's been added. Don't use "User:"/"Assistant:"
+        // format — the model echoes those.
+        var contextSummary = ""
+        if userMessages.count > 1 {
+            let priorInputs = userMessages.dropLast().map(\.content)
+            contextSummary = "\n\nPrevious entries from this user: " + priorInputs.joined(separator: "; ") + "."
+            contextSummary += "\nThe first entry was the user's own name. Use their last name for family members when no last name is given."
+        }
+
+        let instructions = systemParts.joined(separator: "\n\n") + contextSummary
         return (instructions, lastUserMsg)
     }
 }
