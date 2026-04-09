@@ -100,46 +100,108 @@ struct RootView: View {
     }
 }
 
-// MARK: - Main Tab View (iPhone uses tabs, iPad uses sidebar)
-
-enum AppTab: String, CaseIterable {
-    case tree = "My Tree"
-    case people = "People"
-    case decks = "Decks"
-    case settings = "Settings"
-
-    var icon: String {
-        switch self {
-        case .tree: "tree"
-        case .people: "person.3"
-        case .decks: "rectangle.stack"
-        case .settings: "gear"
-        }
-    }
-}
+// MARK: - Adaptive Main View
 
 struct MainTabView: View {
     @Environment(AppState.self) private var appState
-    @State private var selectedTab: AppTab = .tree
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
     var body: some View {
+        if sizeClass == .regular {
+            // iPad / Mac Catalyst: sidebar + tree + interview side-by-side
+            iPadLayout
+        } else {
+            // iPhone: tab bar
+            iPhoneLayout
+        }
+    }
+
+    // MARK: - iPad: NavigationSplitView + interview panel
+
+    @State private var sidebarSelection: String? = "tree"
+    @State private var showInterviewPanel = true
+
+    private var iPadLayout: some View {
+        NavigationSplitView {
+            List(selection: $sidebarSelection) {
+                Label("My Tree", systemImage: "tree")
+                    .tag("tree")
+                Label("People", systemImage: "person.3")
+                    .tag("people")
+                Label("Flashcard Decks", systemImage: "rectangle.stack")
+                    .tag("decks")
+                Label("Settings", systemImage: "gear")
+                    .tag("settings")
+            }
+            .navigationTitle("KinFlash")
+            .toolbar {
+                ToolbarItem {
+                    Button {
+                        withAnimation { showInterviewPanel.toggle() }
+                    } label: {
+                        Label(
+                            showInterviewPanel ? "Hide Interview" : "Show Interview",
+                            systemImage: showInterviewPanel ? "bubble.left.and.bubble.right.fill" : "bubble.left.and.bubble.right"
+                        )
+                    }
+                }
+            }
+        } content: {
+            // Main content area
+            Group {
+                switch sidebarSelection {
+                case "tree":
+                    TreeCanvasView()
+                case "people":
+                    PeopleListView()
+                case "decks":
+                    DeckListView()
+                case "settings":
+                    SettingsView()
+                default:
+                    TreeCanvasView()
+                }
+            }
+        } detail: {
+            // Interview panel (always available on iPad)
+            if showInterviewPanel {
+                InterviewView(embedded: true)
+                    .navigationTitle("Interview")
+            } else {
+                Text("Tap the chat icon in the sidebar to show the interview panel.")
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+        }
+    }
+
+    // MARK: - iPhone: TabView
+
+    @State private var selectedTab = 0
+
+    private var iPhoneLayout: some View {
         TabView(selection: $selectedTab) {
-            Tab(AppTab.tree.rawValue, systemImage: "tree", value: .tree) {
+            Tab("My Tree", systemImage: "tree", value: 0) {
                 NavigationStack {
                     TreeCanvasView()
                 }
             }
-            Tab(AppTab.people.rawValue, systemImage: "person.3", value: .people) {
+            Tab("People", systemImage: "person.3", value: 1) {
                 NavigationStack {
                     PeopleListView()
                 }
             }
-            Tab(AppTab.decks.rawValue, systemImage: "rectangle.stack", value: .decks) {
+            Tab("Interview", systemImage: "bubble.left.and.bubble.right", value: 2) {
+                NavigationStack {
+                    InterviewView(embedded: true)
+                }
+            }
+            Tab("Decks", systemImage: "rectangle.stack", value: 3) {
                 NavigationStack {
                     DeckListView()
                 }
             }
-            Tab(AppTab.settings.rawValue, systemImage: "gear", value: .settings) {
+            Tab("Settings", systemImage: "gear", value: 4) {
                 NavigationStack {
                     SettingsView()
                 }

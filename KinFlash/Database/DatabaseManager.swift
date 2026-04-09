@@ -114,6 +114,15 @@ final class DatabaseManager: Sendable {
             )
         }
 
+        migrator.registerMigration("v2_interview_messages") { db in
+            try db.create(table: "interviewMessage") { t in
+                t.primaryKey("id", .text)
+                t.column("role", .text).notNull()
+                t.column("content", .text).notNull()
+                t.column("createdAt", .datetime).notNull()
+            }
+        }
+
         try migrator.migrate(dbQueue)
     }
 }

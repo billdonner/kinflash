@@ -1,15 +1,19 @@
 import SwiftUI
+import GRDB
 
 struct InterviewMessage: Identifiable {
-    let id = UUID()
+    let id: UUID
     let role: AIRole
     let content: String
+    let createdAt: Date
 }
 
 struct InterviewView: View {
     @Environment(AppState.self) private var appState
     @Environment(\.dismiss) private var dismiss
     var onComplete: () -> Void = {}
+    /// When true, hides the Done toolbar button (used in side-by-side iPad mode)
+    var embedded: Bool = false
 
     @State private var messages: [InterviewMessage] = []
     @State private var inputText = ""
@@ -18,6 +22,7 @@ struct InterviewView: View {
     @State private var conversationHistory: [AIMessage] = []
     @State private var errorMessage: String?
     @State private var extractedCount = 0
+    @State private var hasLoadedHistory = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -31,8 +36,10 @@ struct InterviewView: View {
                         }
 
                         if !streamingText.isEmpty {
-                            MessageBubble(message: InterviewMessage(role: .assistant, content: streamingText))
-                                .id("streaming")
+                            MessageBubble(message: InterviewMessage(
+                                id: UUID(), role: .assistant, content: streamingText, createdAt: Date()
+                            ))
+                            .id("streaming")
                         }
 
                         if isLoading && streamingText.isEmpty {
@@ -80,10 +87,21 @@ struct InterviewView: View {
         .navigationTitle("Interview")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Done") {
-                    onComplete()
-                    dismiss()
+            if !embedded {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Done") {
+                        onComplete()
+                        dismiss()
+                    }
+                }
+            }
+            ToolbarItem(placement: .primaryAction) {
+                Menu {
+                    Button("Clear History", systemImage: "trash", role: .destructive) {
+                        clearHistory()
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
                 }
             }
             if extractedCount > 0 {
@@ -95,10 +113,76 @@ struct InterviewView: View {
             }
         }
         .onAppear {
-            if messages.isEmpty {
-                addAssistantMessage("Hi! I'm going to help you build your family tree. Let's start with you. What's your full name?")
+            if !hasLoadedHistory {
+                loadHistory()
+                hasLoadedHistory = true
             }
         }
+    }
+
+    // MARK: - Persistence
+
+    private func loadHistory() {
+        guard let db = appState.databaseManager else { return }
+        do {
+            let saved = try db.dbQueue.read { database in
+                try PersistedMessage.order(Column("createdAt").asc).fetchAll(database)
+            }
+
+            if saved.isEmpty {
+                // First time — add the greeting
+                let greeting = "Hi! I'm going to help you build your family tree. Let's start with you. What's your full name?"
+                let msg = persistMessage(role: .assistant, content: greeting)
+                messages = [msg]
+            } else {
+                // Restore previous conversation
+                messages = saved.map { pm in
+                    InterviewMessage(
+                        id: pm.id,
+                        role: AIRole(rawValue: pm.role) ?? .assistant,
+                        content: pm.content,
+                        createdAt: pm.createdAt
+                    )
+                }
+                // Rebuild conversation history for AI context
+                conversationHistory = messages.map { msg in
+                    AIMessage(role: msg.role, content: msg.content)
+                }
+            }
+        } catch {
+            // Fresh start on error
+            let greeting = "Hi! I'm going to help you build your family tree. Let's start with you. What's your full name?"
+            messages = [InterviewMessage(id: UUID(), role: .assistant, content: greeting, createdAt: Date())]
+        }
+    }
+
+    @discardableResult
+    private func persistMessage(role: AIRole, content: String) -> InterviewMessage {
+        let now = Date()
+        let id = UUID()
+        let msg = InterviewMessage(id: id, role: role, content: content, createdAt: now)
+
+        if let db = appState.databaseManager {
+            let persisted = PersistedMessage(id: id, role: role.rawValue, content: content, createdAt: now)
+            try? db.dbQueue.write { database in
+                try persisted.insert(database)
+            }
+        }
+
+        return msg
+    }
+
+    private func clearHistory() {
+        if let db = appState.databaseManager {
+            try? db.dbQueue.write { database in
+                try database.execute(sql: "DELETE FROM interviewMessage")
+            }
+        }
+        messages = []
+        conversationHistory = []
+        extractedCount = 0
+        hasLoadedHistory = false
+        loadHistory()
     }
 
     // MARK: - Message Handling
@@ -108,7 +192,8 @@ struct InterviewView: View {
         guard !text.isEmpty else { return }
         inputText = ""
 
-        messages.append(InterviewMessage(role: .user, content: text))
+        let userMsg = persistMessage(role: .user, content: text)
+        messages.append(userMsg)
         conversationHistory.append(AIMessage(role: .user, content: text))
 
         isLoading = true
@@ -122,7 +207,8 @@ struct InterviewView: View {
     @MainActor
     private func processWithAI(_ text: String) async {
         guard let db = appState.databaseManager else {
-            addAssistantMessage("AI is not configured. You can add people manually from the People tab.")
+            let msg = persistMessage(role: .assistant, content: "AI is not configured. You can add people manually from the People tab.")
+            messages.append(msg)
             isLoading = false
             return
         }
@@ -137,7 +223,6 @@ struct InterviewView: View {
         let provider = router.provider(for: settings?.selectedAIProvider, model: settings?.selectedModel)
         let service = InterviewService(dbQueue: db.dbQueue, aiProvider: provider)
 
-        // Use streaming: collect tokens as they arrive, all state mutations on MainActor
         var fullResponse = ""
         streamingText = ""
 
@@ -152,13 +237,14 @@ struct InterviewView: View {
                 streamingText = cleanResponse(fullResponse)
             }
 
-            // Streaming complete — finalize
+            // Streaming complete — persist and finalize
             let finalText = cleanResponse(fullResponse)
             streamingText = ""
-            addAssistantMessage(finalText)
+            let assistantMsg = persistMessage(role: .assistant, content: finalText)
+            messages.append(assistantMsg)
             conversationHistory.append(AIMessage(role: .assistant, content: fullResponse))
 
-            // Extract ALL person JSON blocks from the full response (provider may emit multiple)
+            // Extract ALL person JSON blocks
             let allExtracted = extractAllPersonJSON(from: fullResponse)
             for person in allExtracted where person.isComplete {
                 do {
@@ -179,34 +265,26 @@ struct InterviewView: View {
         } catch {
             streamingText = ""
             if !fullResponse.isEmpty {
-                addAssistantMessage(cleanResponse(fullResponse))
+                let msg = persistMessage(role: .assistant, content: cleanResponse(fullResponse))
+                messages.append(msg)
             }
             errorMessage = error.localizedDescription
             isLoading = false
         }
     }
 
-    /// Extract ALL person JSON blocks from text (provider may emit multiple per response).
     private func extractAllPersonJSON(from text: String) -> [ExtractedPerson] {
         let pattern = #"```json\s*([\s\S]*?)\s*```"#
         guard let regex = try? NSRegularExpression(pattern: pattern) else { return [] }
         let nsRange = NSRange(text.startIndex..., in: text)
-        let matches = regex.matches(in: text, range: nsRange)
-
-        return matches.compactMap { match -> ExtractedPerson? in
+        return regex.matches(in: text, range: nsRange).compactMap { match -> ExtractedPerson? in
             guard let range = Range(match.range(at: 1), in: text) else { return nil }
-            let jsonString = String(text[range])
-            guard let data = jsonString.data(using: .utf8) else { return nil }
+            guard let data = String(text[range]).data(using: .utf8) else { return nil }
             return try? JSONDecoder().decode(ExtractedPerson.self, from: data)
         }
     }
 
-    private func addAssistantMessage(_ text: String) {
-        messages.append(InterviewMessage(role: .assistant, content: text))
-    }
-
     private func cleanResponse(_ text: String) -> String {
-        // Remove JSON blocks from display
         let pattern = #"```json[\s\S]*?```"#
         guard let regex = try? NSRegularExpression(pattern: pattern) else { return text }
         let range = NSRange(text.startIndex..., in: text)
@@ -226,13 +304,19 @@ struct MessageBubble: View {
         HStack {
             if isUser { Spacer(minLength: 60) }
 
-            Text(message.content)
-                .font(.body)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 10)
-                .background(isUser ? Color.blue : Color(.systemGray5))
-                .foregroundStyle(isUser ? .white : .primary)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+            VStack(alignment: isUser ? .trailing : .leading, spacing: 4) {
+                Text(message.content)
+                    .font(.body)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .background(isUser ? Color.blue : Color(.systemGray5))
+                    .foregroundStyle(isUser ? .white : .primary)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+
+                Text(message.createdAt.formatted(date: .omitted, time: .shortened))
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+            }
 
             if !isUser { Spacer(minLength: 60) }
         }
