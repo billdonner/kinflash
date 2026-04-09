@@ -1,27 +1,61 @@
 import Foundation
 import GRDB
 
+/// Simple extraction: just name + role. The on-device model can't handle complex schemas.
 struct ExtractedPerson: Codable, Sendable {
     let firstName: String
-    let middleName: String?
     let lastName: String?
+    let role: String?           // "self", "parent", "spouse", "child", "sibling", etc.
+
+    // Legacy fields — accepted if present but not required
+    let middleName: String?
     let nickname: String?
     let birthYear: Int?
     let birthPlace: String?
-    let isLiving: Bool?         // Optional: model may omit or send null
+    let isLiving: Bool?
     let deathYear: Int?
     let gender: String?
-    let relationships: [ExtractedRelationship]?  // Optional: model may omit
-    let isComplete: Bool?       // Optional: model may omit
+    let relationships: [ExtractedRelationship]?
+    let isComplete: Bool?
 
-    /// Safe accessors with defaults
     var isPersonComplete: Bool { isComplete ?? true }
     var livingStatus: Bool { isLiving ?? true }
     var personRelationships: [ExtractedRelationship] { relationships ?? [] }
+
+    // CodingKeys with defaults for missing fields
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        firstName = try c.decode(String.self, forKey: .firstName)
+        lastName = try c.decodeIfPresent(String.self, forKey: .lastName)
+        role = try c.decodeIfPresent(String.self, forKey: .role)
+        middleName = try c.decodeIfPresent(String.self, forKey: .middleName)
+        nickname = try c.decodeIfPresent(String.self, forKey: .nickname)
+        birthYear = try c.decodeIfPresent(Int.self, forKey: .birthYear)
+        birthPlace = try c.decodeIfPresent(String.self, forKey: .birthPlace)
+        isLiving = try c.decodeIfPresent(Bool.self, forKey: .isLiving)
+        deathYear = try c.decodeIfPresent(Int.self, forKey: .deathYear)
+        gender = try c.decodeIfPresent(String.self, forKey: .gender)
+        // Decode relationships only if it's actually an array of ExtractedRelationship
+        // (skip if the model nested person objects instead)
+        relationships = try? c.decodeIfPresent([ExtractedRelationship].self, forKey: .relationships)
+        isComplete = try c.decodeIfPresent(Bool.self, forKey: .isComplete)
+    }
+
+    // For test construction
+    init(firstName: String, middleName: String? = nil, lastName: String? = nil,
+         nickname: String? = nil, birthYear: Int? = nil, birthPlace: String? = nil,
+         isLiving: Bool? = true, deathYear: Int? = nil, gender: String? = nil,
+         relationships: [ExtractedRelationship]? = nil, isComplete: Bool? = true,
+         role: String? = nil) {
+        self.firstName = firstName; self.middleName = middleName; self.lastName = lastName
+        self.nickname = nickname; self.birthYear = birthYear; self.birthPlace = birthPlace
+        self.isLiving = isLiving; self.deathYear = deathYear; self.gender = gender
+        self.relationships = relationships; self.isComplete = isComplete; self.role = role
+    }
 }
 
 struct ExtractedRelationship: Codable, Sendable {
-    let type: String      // "parent", "spouse", "sibling", "child"
+    let type: String
     let personName: String
 }
 
@@ -34,31 +68,32 @@ struct InterviewService: Sendable {
 
     private var systemPrompt: String {
         """
-        You help build a family tree by asking questions and extracting names the user provides.
+        You are a family tree assistant. Ask about family members and extract names.
 
-        STRICT RULES:
-        - ONLY create JSON for people whose names appear in the user's messages.
-        - NEVER invent, guess, or fabricate any names. If the user has not named someone, do not create them.
-        - Ask about family members one category at a time: first parents, then spouse, then children, then siblings, then others.
-        - Keep questions short and friendly.
+        RULES:
+        1. Only extract names the user actually says. Never invent names.
+        2. For each person mentioned, output one simple JSON block.
+        3. Ask one question at a time: name, then parents, then spouse, then children.
+        4. Say a short friendly message before any JSON blocks.
 
-        When the user provides a name, output a JSON block wrapped in triple backticks with the word json:
+        JSON FORMAT — one block per person, wrapped in triple backticks:
 
         ```json
-        {"firstName":"...","middleName":null,"lastName":"...","nickname":null,"birthYear":null,"birthPlace":null,"isLiving":true,"deathYear":null,"gender":null,"relationships":[],"isComplete":true}
+        {"firstName":"Tom","lastName":"Smith","role":"child"}
         ```
 
-        IMPORTANT: The opening line must be EXACTLY three backticks followed by json and nothing else.
-        Then the JSON on the next line. Then three backticks to close.
+        The "role" field describes how this person relates to the main user:
+        "self", "parent", "spouse", "child", "sibling", "grandchild", "uncle", "aunt", "cousin"
 
-        Also include a short friendly message BEFORE the JSON block, like "Got it!" or "Nice to meet you!"
-
-        Fill in only what the user actually stated. Use null for anything not mentioned.
-        Relationship types: "parent" (is parent of), "child" (is child of), "spouse", "sibling".
-        Use proper capitalization for names. Put nicknames in the nickname field only.
-
-        If the user gives age instead of birth year, convert it (current year minus age).
-        If no names are provided in a message, respond conversationally with NO JSON output.
+        RULES FOR JSON:
+        - One person per block. Multiple people = multiple separate blocks.
+        - Only three fields: firstName, lastName, role. Nothing else.
+        - Do NOT nest objects inside the JSON.
+        - Do NOT include arrays inside the JSON.
+        - If user says "my parents are Bob and Sue Smith", output two blocks:
+          {"firstName":"Bob","lastName":"Smith","role":"parent"}
+          {"firstName":"Sue","lastName":"Smith","role":"parent"}
+        - If no names in the message, just respond conversationally, no JSON.
         """
     }
 
@@ -152,8 +187,13 @@ struct InterviewService: Sendable {
             person = newPerson
         }
 
-        // Process relationships
+        // Link relationship based on role (relative to root person)
         let treeService = TreeService(dbQueue: dbQueue)
+        if let role = extracted.role?.lowercased(), role != "self" {
+            try linkByRole(person: person, role: role, treeService: treeService)
+        }
+
+        // Also process legacy relationship array if present
         for rel in extracted.personRelationships {
             try linkRelationship(
                 extractedPerson: person,
@@ -163,6 +203,43 @@ struct InterviewService: Sendable {
         }
 
         return person
+    }
+
+    /// Link a person to the root person based on their role.
+    private func linkByRole(person: Person, role: String, treeService: TreeService) throws {
+        // Find the root person (the first "self" person, or the first person added)
+        let rootPerson = try dbQueue.read { db -> Person? in
+            // Get the root from settings
+            let settings = try AppSettings.current(db)
+            if let rootId = settings.rootPersonId {
+                return try Person.fetchOne(db, key: rootId)
+            }
+            // Fallback: first person in the database
+            return try Person.order(Column("createdAt")).fetchOne(db)
+        }
+        guard let root = rootPerson, root.id != person.id else { return }
+
+        do {
+            switch role {
+            case "parent":
+                // This person is a parent of root
+                try treeService.addRelationship(from: person.id, to: root.id, type: .parent)
+            case "child":
+                // This person is a child of root
+                try treeService.addRelationship(from: root.id, to: person.id, type: .parent)
+            case "spouse":
+                try treeService.addRelationship(from: root.id, to: person.id, type: .spouse)
+            case "sibling":
+                try treeService.addRelationship(from: root.id, to: person.id, type: .sibling)
+            case "grandchild":
+                // Can't directly link grandchild without knowing which child — skip for now
+                break
+            default:
+                break
+            }
+        } catch is TreeServiceError {
+            // Relationship already exists — fine
+        }
     }
 
     // MARK: - Relationship Linking
