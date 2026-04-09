@@ -21,13 +21,11 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.billdonner.kinflash
         MARKETING_VERSION: "1.0.0"
-        CURRENT_PROJECT_VERSION: "11"
+        CURRENT_PROJECT_VERSION: "12"
         SWIFT_VERSION: "6.0"
-        INFOPLIST_VALUES: >-
-          UILaunchScreen={};
-          UISupportedInterfaceOrientations=UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortraitUpsideDown;
-          UISupportedInterfaceOrientations~ipad=UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight;
-          UIRequiresFullScreen=false;
+        INFOPLIST_KEY_UILaunchScreen_Generation: true
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortraitUpsideDown"
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
         SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: true
         SWIFT_STRICT_CONCURRENCY: complete
         GENERATE_INFOPLIST_FILE: true

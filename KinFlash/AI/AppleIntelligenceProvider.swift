@@ -32,10 +32,8 @@ struct AppleIntelligenceProvider: AIProvider {
 
         // Reconstruct what we've already asked about from assistant messages
         let askedText = allAssistant.map(\.content).joined(separator: " ").lowercased()
-        let allText = messages.map(\.content).joined(separator: " ").lowercased()
 
         // Phase detection: what have we covered?
-        let askedName = askedText.contains("full name")
         let askedBirthYear = askedText.contains("born") || askedText.contains("birth year")
         let askedParents = askedText.contains("parent")
         let askedSpouse = askedText.contains("spouse") || askedText.contains("married") || askedText.contains("partner")
@@ -108,7 +106,7 @@ struct AppleIntelligenceProvider: AIProvider {
         if isNegativeOrEmpty(lower) { return [] }
 
         // Check for birth year response (just a number)
-        if let year = extractYear(from: text), text.filter(\.isLetter).count < 5 {
+        if extractYear(from: text) != nil, text.filter(\.isLetter).count < 5 {
             // This is a birth year answer — don't create a new person, just acknowledge
             return []
         }
@@ -135,8 +133,7 @@ struct AppleIntelligenceProvider: AIProvider {
             let name = match[1].trimmingCharacters(in: .whitespaces)
             let parts = splitName(name)
             // Try to figure out parent relationship
-            let parentRef = match.count > 2 ? capitalizeName(match[2]) : rootFirst
-            let relType = match.count > 3 && !match[3].isEmpty ? "sibling" : "sibling"
+            let parentRef = match.count > 2 && !match[2].isEmpty ? capitalizeName(match[2]) : rootFirst
             blocks.append(buildPersonJSON(
                 firstName: parts.first, middleName: parts.middle, lastName: parts.last,
                 birthYear: nil, gender: match[0].lowercased().hasPrefix("uncle") ? "male" : "female",
