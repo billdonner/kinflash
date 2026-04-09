@@ -6,7 +6,7 @@ final class AppleIntelligenceInterviewTests: XCTestCase {
 
     /// Verify that the first user message (name) produces a JSON extraction block.
     func testNameEntryEmitsJSON() async throws {
-        let provider = AppleIntelligenceProvider()
+        let provider = LocalInterviewProvider()
 
         // User gives their name — should get JSON back with the person
         let messages = [
@@ -24,7 +24,7 @@ final class AppleIntelligenceInterviewTests: XCTestCase {
 
     /// Verify that parent names produce JSON blocks with parent relationships.
     func testParentNamesEmitRelationships() async throws {
-        let provider = AppleIntelligenceProvider()
+        let provider = LocalInterviewProvider()
 
         // Simulate conversation through to parent question
         let messages = [
@@ -48,7 +48,7 @@ final class AppleIntelligenceInterviewTests: XCTestCase {
     /// Verify the end-to-end flow: name → parents → creates tree in DB.
     func testEndToEndCreatesTreeViaInterviewService() async throws {
         let db = try DatabaseManager(inMemory: true)
-        let provider = AppleIntelligenceProvider()
+        let provider = LocalInterviewProvider()
         let service = InterviewService(dbQueue: db.dbQueue, aiProvider: provider)
 
         // Turn 1: name — should extract person
@@ -96,7 +96,7 @@ final class AppleIntelligenceInterviewTests: XCTestCase {
 
     /// Verify spouse handling.
     func testSpouseExtraction() async throws {
-        let provider = AppleIntelligenceProvider()
+        let provider = LocalInterviewProvider()
 
         let messages = [
             AIMessage(role: .system, content: ""),
@@ -121,7 +121,7 @@ final class AppleIntelligenceInterviewTests: XCTestCase {
 
     /// Verify children extraction.
     func testChildrenExtraction() async throws {
-        let provider = AppleIntelligenceProvider()
+        let provider = LocalInterviewProvider()
 
         let messages = [
             AIMessage(role: .system, content: ""),
@@ -146,7 +146,7 @@ final class AppleIntelligenceInterviewTests: XCTestCase {
 
     /// Verify grandchildren via possessive pattern ("Andrew's kids are Teddy and Max").
     func testGrandchildrenExtraction() async throws {
-        let provider = AppleIntelligenceProvider()
+        let provider = LocalInterviewProvider()
 
         let messages = [
             AIMessage(role: .system, content: ""),
@@ -177,7 +177,7 @@ final class AppleIntelligenceInterviewTests: XCTestCase {
 
     /// Verify names are properly capitalized.
     func testNameCapitalization() async throws {
-        let provider = AppleIntelligenceProvider()
+        let provider = LocalInterviewProvider()
 
         let messages = [
             AIMessage(role: .system, content: ""),
@@ -192,7 +192,7 @@ final class AppleIntelligenceInterviewTests: XCTestCase {
 
     /// Verify garbage input is not parsed as names.
     func testGarbageInputRejected() async throws {
-        let provider = AppleIntelligenceProvider()
+        let provider = LocalInterviewProvider()
 
         let messages = [
             AIMessage(role: .system, content: ""),

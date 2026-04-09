@@ -11,6 +11,7 @@
 		06029F7A0FED3D83DE29B2C5 /* PeopleListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02590FD6E245E74E291A441D /* PeopleListView.swift */; };
 		12475FE721091D38BCF3D6D0 /* KinFlashApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8FB4E0E6CA772FA94FB362 /* KinFlashApp.swift */; };
 		183D648FA805977F248734B5 /* GEDCOMExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D6F353F0EFBC30EEB1ABBFA /* GEDCOMExporter.swift */; };
+		2ABF1D31F968C0C8019DED43 /* LocalInterviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2522081BF43DB027F4E2D6A0 /* LocalInterviewProvider.swift */; };
 		2D1D67DA3C19BB80A2584251 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE7C7AB23CA490084777FB0 /* DatabaseManager.swift */; };
 		2D98A9D08112D5697E5F2077 /* RelationshipResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B99C892513E73FCB5FCD5C /* RelationshipResolverTests.swift */; };
 		2FBA7E54DEE698067C7FA10D /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 8273D935D05E910304E2D9DB /* GRDB */; };
@@ -84,6 +85,7 @@
 		1DDFB892A63C8A590DB5DF07 /* GEDCOMExporterEdgeCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GEDCOMExporterEdgeCaseTests.swift; sourceTree = "<group>"; };
 		2090C56F34E35875DDAAF9F6 /* PersonProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonProfileView.swift; sourceTree = "<group>"; };
 		2391A5CD811F4A2E263E4873 /* Person.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
+		2522081BF43DB027F4E2D6A0 /* LocalInterviewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalInterviewProvider.swift; sourceTree = "<group>"; };
 		2E2A2AAFAEC25ECEF6B6A19C /* Flashcard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Flashcard.swift; sourceTree = "<group>"; };
 		2F8F9A085200E9364BA89F12 /* InterviewMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewMessage.swift; sourceTree = "<group>"; };
 		31C826E18226B5F00316C274 /* DatabaseMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseMigrationTests.swift; sourceTree = "<group>"; };
@@ -319,6 +321,7 @@
 				4743084B24C5C4821AA20B47 /* AIProviderRouter.swift */,
 				1CC9DB2E617C4CFBC1DC0E34 /* AnthropicProvider.swift */,
 				E2FE8B545B63086341AB7791 /* AppleIntelligenceProvider.swift */,
+				2522081BF43DB027F4E2D6A0 /* LocalInterviewProvider.swift */,
 				A81CF282C435186540D3C2C1 /* OpenAIProvider.swift */,
 			);
 			path = AI;
@@ -392,7 +395,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1600;
+				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					3D0743145EDE020956207BC6 = {
 						DevelopmentTeam = NEAY582ME4;
@@ -470,6 +473,7 @@
 				68EE1E3479ABE37CDB6E5363 /* InterviewView.swift in Sources */,
 				F30031709E985FEBCC7182ED /* KeychainManager.swift in Sources */,
 				12475FE721091D38BCF3D6D0 /* KinFlashApp.swift in Sources */,
+				2ABF1D31F968C0C8019DED43 /* LocalInterviewProvider.swift in Sources */,
 				709360039C3F6FA125A60833 /* OnboardingFlow.swift in Sources */,
 				9D6323C0F7020098FFE648AC /* OpenAIProvider.swift in Sources */,
 				A8DB07B89AF9F8575820B410 /* PDFExporter.swift in Sources */,
@@ -550,7 +554,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -585,7 +589,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = NEAY582ME4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -668,7 +672,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -684,7 +688,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = NEAY582ME4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

@@ -5,7 +5,7 @@ import GRDB
 final class NicknameAndAgeTests: XCTestCase {
 
     func testNicknameInQuotesExtracted() async throws {
-        let provider = AppleIntelligenceProvider()
+        let provider = LocalInterviewProvider()
         let messages = [
             AIMessage(role: .system, content: ""),
             AIMessage(role: .user, content: #"Bill "Poobah" Donner"#)
@@ -20,7 +20,7 @@ final class NicknameAndAgeTests: XCTestCase {
     }
 
     func testAgeConvertedToBirthYear() async throws {
-        let provider = AppleIntelligenceProvider()
+        let provider = LocalInterviewProvider()
         let currentYear = Calendar.current.component(.year, from: Date())
         let messages = [
             AIMessage(role: .system, content: ""),
@@ -45,7 +45,7 @@ final class NicknameAndAgeTests: XCTestCase {
     }
 
     func testNicknameAndAgeTogether() async throws {
-        let provider = AppleIntelligenceProvider()
+        let provider = LocalInterviewProvider()
         let currentYear = Calendar.current.component(.year, from: Date())
         let messages = [
             AIMessage(role: .system, content: ""),
@@ -62,7 +62,7 @@ final class NicknameAndAgeTests: XCTestCase {
     }
 
     func testDonePhraseStopsExtraction() async throws {
-        let provider = AppleIntelligenceProvider()
+        let provider = LocalInterviewProvider()
         let messages = [
             AIMessage(role: .system, content: ""),
             AIMessage(role: .user, content: "John Smith"),
@@ -78,7 +78,7 @@ final class NicknameAndAgeTests: XCTestCase {
     }
 
     func testDoneVariations() async throws {
-        let provider = AppleIntelligenceProvider()
+        let provider = LocalInterviewProvider()
 
         for phrase in ["done", "I'm done", "that's it", "finished", "no more", "nothing else"] {
             let messages = [
@@ -94,7 +94,7 @@ final class NicknameAndAgeTests: XCTestCase {
     }
 
     func testMultipleChildrenWithAges() async throws {
-        let provider = AppleIntelligenceProvider()
+        let provider = LocalInterviewProvider()
         let messages = [
             AIMessage(role: .system, content: ""),
             AIMessage(role: .user, content: "John Smith"),
@@ -117,7 +117,7 @@ final class NicknameAndAgeTests: XCTestCase {
     }
 
     func testCantRememberRejected() async throws {
-        let provider = AppleIntelligenceProvider()
+        let provider = LocalInterviewProvider()
         let messages = [
             AIMessage(role: .system, content: ""),
             AIMessage(role: .user, content: "John"),
