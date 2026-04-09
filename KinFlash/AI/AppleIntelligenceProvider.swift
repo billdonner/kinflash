@@ -6,6 +6,8 @@ import FoundationModels
 struct AppleIntelligenceProvider: AIProvider {
 
     private let fallback = LocalInterviewProvider()
+    /// On-device models need more time than cloud APIs
+    private let timeoutSeconds: Double = 120
 
     var isAvailable: Bool {
         SystemLanguageModel.default.isAvailable
@@ -18,7 +20,7 @@ struct AppleIntelligenceProvider: AIProvider {
         }
 
         do {
-            return try await withTimeout(seconds: 15) {
+            return try await withTimeout(seconds: timeoutSeconds) {
                 let (instructions, userPrompt) = buildPrompt(from: messages)
                 let session = LanguageModelSession(instructions: instructions)
                 let response = try await session.respond(to: userPrompt)
@@ -50,16 +52,17 @@ struct AppleIntelligenceProvider: AIProvider {
                     let (instructions, userPrompt) = buildPrompt(from: messages)
                     let session = LanguageModelSession(instructions: instructions)
 
-                    try await withTimeout(seconds: 15) {
-                        var lastLength = 0
-                        let stream = session.streamResponse(to: userPrompt)
-                        for try await partial in stream {
-                            let current = partial.content
-                            if current.count > lastLength {
-                                let delta = String(current.dropFirst(lastLength))
-                                continuation.yield(delta)
-                                lastLength = current.count
-                            }
+                    // No timeout on streaming — let the model finish naturally.
+                    // The initial connection is what can fail (sandbox); once
+                    // streaming starts it will complete.
+                    var lastLength = 0
+                    let stream = session.streamResponse(to: userPrompt)
+                    for try await partial in stream {
+                        let current = partial.content
+                        if current.count > lastLength {
+                            let delta = String(current.dropFirst(lastLength))
+                            continuation.yield(delta)
+                            lastLength = current.count
                         }
                     }
                     continuation.finish()
@@ -69,7 +72,7 @@ struct AppleIntelligenceProvider: AIProvider {
                     continuation.yield("\n\n[Apple Intelligence failed: \(error.localizedDescription). Switching to basic mode.]\n\n")
                 }
 
-                // Fallback with visible notice
+                // Fallback
                 do {
                     let localResponse = try await fallback.chat(messages: messages)
                     continuation.yield(localResponse)
@@ -103,7 +106,7 @@ struct AppleIntelligenceProvider: AIProvider {
         return (instructions, userPrompt)
     }
 
-    // MARK: - Timeout
+    // MARK: - Timeout (used for non-streaming chat only)
 
     private func withTimeout<T: Sendable>(seconds: Double, operation: @escaping @Sendable () async throws -> T) async throws -> T {
         try await withThrowingTaskGroup(of: T.self) { group in

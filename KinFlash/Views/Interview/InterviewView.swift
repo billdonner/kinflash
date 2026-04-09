@@ -289,11 +289,24 @@ struct InterviewView: View {
     }
 
     private func cleanResponse(_ text: String) -> String {
-        let pattern = #"```json[\s\S]*?```"#
-        guard let regex = try? NSRegularExpression(pattern: pattern) else { return text }
-        let range = NSRange(text.startIndex..., in: text)
-        return regex.stringByReplacingMatches(in: text, range: range, withTemplate: "")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
+        var cleaned = text
+
+        // Remove complete JSON blocks: ```json ... ```
+        if let regex = try? NSRegularExpression(pattern: #"```json[\s\S]*?```"#) {
+            let range = NSRange(cleaned.startIndex..., in: cleaned)
+            cleaned = regex.stringByReplacingMatches(in: cleaned, range: range, withTemplate: "")
+        }
+
+        // Remove incomplete/partial JSON blocks (started but no closing fence)
+        if let regex = try? NSRegularExpression(pattern: #"```json[\s\S]*$"#) {
+            let range = NSRange(cleaned.startIndex..., in: cleaned)
+            cleaned = regex.stringByReplacingMatches(in: cleaned, range: range, withTemplate: "")
+        }
+
+        // Remove stray opening/closing fences
+        cleaned = cleaned.replacingOccurrences(of: "```", with: "")
+
+        return cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
 
