@@ -56,6 +56,11 @@ struct AppleIntelligenceProvider: AIProvider {
             return "Hi! I'm going to help you build your family tree. Let's start with you. What's your full name?"
         }
 
+        // Check if user is done
+        if isNegativeOrEmpty(lastUser.lowercased()) || isDonePhrase(lastUser) {
+            return "Your family tree is looking great! You can keep adding people anytime by coming back to the Interview tab."
+        }
+
         // Try to extract data from the latest user message
         var jsonBlocks = ""
         let extracted = extractFromMessage(lastUser, rootFirst: rootFirst, context: askedText)
@@ -66,28 +71,27 @@ struct AppleIntelligenceProvider: AIProvider {
         // Determine next question based on what we haven't asked
         let nextQuestion: String
         if !askedBirthYear && userMessages.count == 1 {
-            // First message was name — emit the person and ask birth year
-            let nameParts = lastUser.components(separatedBy: " ").map { capitalizeName($0) }
-            let fn = nameParts.first ?? lastUser
-            let ln = nameParts.count > 1 ? nameParts.last : nil
-            let mn = nameParts.count > 2 ? nameParts.dropFirst().dropLast().joined(separator: " ") : nil
-            jsonBlocks = buildPersonJSON(firstName: fn, middleName: mn, lastName: ln,
-                                         birthYear: nil, gender: nil, isLiving: true, relationships: [])
-            nextQuestion = "Nice to meet you, \(fn)! What year were you born?"
+            // First message was name — parse with nickname/age support and emit
+            let parsed = parseFullNameEntry(lastUser)
+            jsonBlocks = buildPersonJSON(firstName: parsed.firstName, middleName: parsed.middleName,
+                                         lastName: parsed.lastName, nickname: parsed.nickname,
+                                         birthYear: parsed.age.map { Calendar.current.component(.year, from: Date()) - $0 },
+                                         gender: nil, isLiving: true, relationships: [])
+            nextQuestion = "Nice to meet you, \(parsed.firstName)! What year were you born?"
         } else if !askedParents {
-            nextQuestion = "Tell me about your parents. What are their full names? (e.g., \"Richard Donner and Rose Donner\")"
+            nextQuestion = "Tell me about your parents. What are their full names? You can include nicknames in quotes and ages. (e.g., Richard \"Dick\" Donner, 95 and Rose Donner, 92)"
         } else if !askedSpouse {
-            nextQuestion = "Are you married or do you have a partner? What's their full name? (Say \"no\" to skip)"
+            nextQuestion = "Are you married or do you have a partner? What's their full name? (Say \"no\" or \"skip\" to skip)"
         } else if !askedChildren {
-            nextQuestion = "Do you have any children? Tell me their full names, separated by commas."
+            nextQuestion = "Do you have any children? Tell me their names, with ages if you know them. (e.g., Andrew Donner 45, Charlie Donner 40)"
         } else if !askedSiblings {
             nextQuestion = "Do you have any brothers or sisters? What are their names?"
         } else if !askedGrandchildren {
-            nextQuestion = "Do any of your children have kids (your grandchildren)? Tell me which child and their kids' names. (e.g., \"Andrew's kids are Teddy and Max\")"
+            nextQuestion = "Do any of your children have kids (your grandchildren)? Tell me which child and their kids' names. (e.g., \"Andrew's kids are Teddy, 12 and Max, 9\")"
         } else if !askedExtended {
             nextQuestion = "Let's go wider. Do you have any aunts, uncles, or cousins you'd like to add? Tell me their names and how they're related. (e.g., \"Uncle Frank Donner, my dad's brother\")"
         } else {
-            nextQuestion = "Anyone else you'd like to add? You can tell me about nieces, nephews, in-laws, or anyone else. Or tap Done to see your tree!"
+            nextQuestion = "Anyone else? You can tell me about nieces, nephews, in-laws, or anyone else. Say \"done\" or \"that's all\" when finished."
         }
 
         // Build response: acknowledgment + JSON blocks + next question
@@ -177,11 +181,12 @@ struct AppleIntelligenceProvider: AIProvider {
         let names = parseNameList(text)
         for name in names {
             let parts = splitName(name)
-            // Only create if it looks like a real name (capitalized, 1-3 words, no question marks)
-            if looksLikeName(parts.first) {
+            if looksLikeName(name) {
+                let birthYear = parts.age.map { Calendar.current.component(.year, from: Date()) - $0 }
                 blocks.append(buildPersonJSON(
                     firstName: parts.first, middleName: parts.middle, lastName: parts.last,
-                    birthYear: nil, gender: nil, isLiving: nil,
+                    nickname: parts.nickname,
+                    birthYear: birthYear, gender: nil, isLiving: nil,
                     relationships: relFromContext.map { [($0.type, $0.target)] } ?? []
                 ))
             }
@@ -196,22 +201,45 @@ struct AppleIntelligenceProvider: AIProvider {
         let first: String
         let middle: String?
         let last: String?
+        let nickname: String?
+        let age: Int?
     }
 
     private func splitName(_ raw: String) -> NameParts {
-        let words = raw.trimmingCharacters(in: .whitespacesAndNewlines)
-            .components(separatedBy: .whitespaces)
+        var text = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Extract nickname in quotes
+        var nickname: String?
+        for pattern in [#""([^"]+)""#, #"'([^']+)'"#, #"\u{201c}([^\u{201d}]+)\u{201d}"#] {
+            if let match = firstMatch(pattern: pattern, in: text) {
+                nickname = match[1]
+                text = text.replacingOccurrences(of: match[0], with: " ")
+                    .replacingOccurrences(of: "  ", with: " ")
+                    .trimmingCharacters(in: .whitespaces)
+                break
+            }
+        }
+
+        // Extract trailing age
+        var age: Int?
+        let agePattern = #"[,\s]+(\d{1,3})\s*$"#
+        if let match = firstMatch(pattern: agePattern, in: text), let parsed = Int(match[1]), parsed < 150 {
+            age = parsed
+            text = text.replacingOccurrences(of: match[0], with: "").trimmingCharacters(in: .whitespaces)
+        }
+
+        let words = text.components(separatedBy: .whitespaces)
             .filter { !$0.isEmpty }
             .map { capitalizeName($0) }
 
         switch words.count {
-        case 0: return NameParts(first: "Unknown", middle: nil, last: nil)
-        case 1: return NameParts(first: words[0], middle: nil, last: nil)
-        case 2: return NameParts(first: words[0], middle: nil, last: words[1])
+        case 0: return NameParts(first: "Unknown", middle: nil, last: nil, nickname: nickname, age: age)
+        case 1: return NameParts(first: words[0], middle: nil, last: nil, nickname: nickname, age: age)
+        case 2: return NameParts(first: words[0], middle: nil, last: words[1], nickname: nickname, age: age)
         default:
             return NameParts(first: words[0],
                              middle: words[1..<(words.count - 1)].joined(separator: " "),
-                             last: words.last)
+                             last: words.last, nickname: nickname, age: age)
         }
     }
 
@@ -227,10 +255,13 @@ struct AppleIntelligenceProvider: AIProvider {
         // Remove common non-name phrases
         var cleaned = input
         let removePatterns = [
-            #"(?:I\s+)?(?:have|got)\s+\d+\s+\w+"#,   // "I have 3 sons"
-            #"their\s+names?\s+(?:are|is)"#,           // "their names are"
-            #"(?:named?|called)"#,                      // "named" / "called"
-            #"(?:yes|yeah|yep|sure)[,.]?\s*"#,          // "yes, ..."
+            #"(?:I\s+)?(?:have|got)\s+\d+\s+\w+"#,    // "I have 3 sons"
+            #"their\s+names?\s+(?:are|is)"#,            // "their names are"
+            #"(?:named?|called)"#,                       // "named" / "called"
+            #"(?:yes|yeah|yep|sure)[,.]?\s*"#,           // "yes, ..."
+            #"(?:don'?t|didn'?t|doesn'?t)\s+know\b.*"#, // "don't know their names"
+            #"(?:I\s+)?(?:can'?t|couldn'?t)\s+remember\b.*"#, // "can't remember"
+            #"(?:not\s+sure|no\s+idea)\b.*"#,            // "not sure", "no idea"
         ]
         for pattern in removePatterns {
             if let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) {
@@ -243,35 +274,104 @@ struct AppleIntelligenceProvider: AIProvider {
             .replacingOccurrences(of: " and ", with: ", ")
             .replacingOccurrences(of: " & ", with: ", ")
 
+        // Normalize "Name, 25" → "Name 25" so age stays with the name.
+        // Match: comma followed by optional space and 1-3 digits (not followed by more word chars)
+        if let ageCommaRegex = try? NSRegularExpression(pattern: #",\s*(\d{1,3})(?:\s*(?:,|$))"#) {
+            let range = NSRange(cleaned.startIndex..., in: cleaned)
+            cleaned = ageCommaRegex.stringByReplacingMatches(in: cleaned, range: range, withTemplate: " $1,")
+        }
+
         return cleaned
             .components(separatedBy: ",")
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { looksLikeName($0) }
     }
 
-    /// Returns true if the string looks like a person's name.
+    /// Returns true if the string looks like a person's name (may include age/nickname).
     private func looksLikeName(_ text: String?) -> Bool {
-        guard let text = text, !text.isEmpty else { return false }
+        guard var text = text, !text.isEmpty else { return false }
+        // Strip quotes and trailing numbers before checking
+        text = text.replacingOccurrences(of: #"["'\u{201c}\u{201d}]"#, with: "", options: .regularExpression)
+        // Remove trailing age
+        if let regex = try? NSRegularExpression(pattern: #"\s*\d{1,3}\s*$"#) {
+            let range = NSRange(text.startIndex..., in: text)
+            text = regex.stringByReplacingMatches(in: text, range: range, withTemplate: "")
+        }
+        text = text.trimmingCharacters(in: .whitespaces)
+        guard !text.isEmpty else { return false }
         let words = text.components(separatedBy: .whitespaces).filter { !$0.isEmpty }
-        // A name is 1-4 words, each word is letters only (plus hyphen/apostrophe), no question marks
-        guard words.count >= 1 && words.count <= 4 else { return false }
+        guard words.count >= 1 && words.count <= 5 else { return false }
         if text.contains("?") || text.contains("!") { return false }
         let nameChars = CharacterSet.letters.union(CharacterSet(charactersIn: "-'"))
         for word in words {
             if word.unicodeScalars.contains(where: { !nameChars.contains($0) }) { return false }
         }
-        // Reject common non-name words
-        let nonNames: Set<String> = ["no", "nope", "none", "skip", "done", "yes", "yeah", "yep",
-                                      "my", "the", "from", "with", "don't", "have", "had", "was"]
-        if words.count == 1 && nonNames.contains(words[0].lowercased()) { return false }
+        // Reject common non-name words (check each word)
+        let stopWords: Set<String> = ["no", "nope", "none", "skip", "done", "yes", "yeah", "yep",
+                                       "my", "the", "from", "with", "don't", "dont", "have", "had",
+                                       "was", "their", "them", "they", "know", "names", "name",
+                                       "think", "about", "not", "sure", "maybe", "some", "who",
+                                       "what", "when", "where", "how", "just", "also", "too",
+                                       "really", "actually", "well", "like", "that", "this",
+                                       "are", "were", "been", "being", "but", "for", "its"]
+        // Single stop word → reject
+        if words.count == 1 && stopWords.contains(words[0].lowercased()) { return false }
+        // If ALL words are stop words → reject (e.g., "their names")
+        if words.allSatisfy({ stopWords.contains($0.lowercased()) }) { return false }
         return true
     }
 
     private func isNegativeOrEmpty(_ text: String) -> Bool {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        let negatives: Set<String> = ["no", "nope", "none", "skip", "done", "no thanks", "not really",
-                                       "that's it", "that's all", "i'm done", "im done", "nah"]
+        let negatives: Set<String> = ["no", "nope", "none", "skip", "no thanks", "not really", "nah"]
         return trimmed.isEmpty || negatives.contains(trimmed)
+    }
+
+    private func isDonePhrase(_ text: String) -> Bool {
+        let lower = text.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let donePhrases: Set<String> = ["done", "that's it", "that's all", "i'm done", "im done",
+                                         "all done", "finished", "that is all", "nothing else",
+                                         "no more", "we're done", "thats all", "thats it"]
+        return donePhrases.contains(lower) || lower.hasPrefix("i'm done") || lower.hasPrefix("no one else")
+    }
+
+    /// Parse a full name entry that may include nickname in quotes and age.
+    /// E.g., "Bill \"Poobah\" Donner, 72" or "Bill 'Poobah' Donner 72"
+    private struct ParsedNameEntry {
+        let firstName: String
+        let middleName: String?
+        let lastName: String?
+        let nickname: String?
+        let age: Int?
+    }
+
+    private func parseFullNameEntry(_ input: String) -> ParsedNameEntry {
+        var text = input.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Extract nickname in quotes (double or single)
+        var nickname: String?
+        let nicknamePatterns = [#""([^"]+)""#, #"'([^']+)'"#, #"\u{201c}([^\u{201d}]+)\u{201d}"#]
+        for pattern in nicknamePatterns {
+            if let match = firstMatch(pattern: pattern, in: text) {
+                nickname = match[1]
+                text = text.replacingOccurrences(of: match[0], with: " ")
+                    .replacingOccurrences(of: "  ", with: " ")
+                    .trimmingCharacters(in: .whitespaces)
+                break
+            }
+        }
+
+        // Extract trailing age (1-3 digit number at end, possibly after comma)
+        var age: Int?
+        let agePattern = #"[,\s]+(\d{1,3})\s*$"#
+        if let match = firstMatch(pattern: agePattern, in: text), let parsed = Int(match[1]), parsed < 150 {
+            age = parsed
+            text = text.replacingOccurrences(of: match[0], with: "").trimmingCharacters(in: .whitespaces)
+        }
+
+        let parts = splitName(text)
+        return ParsedNameEntry(firstName: parts.first, middleName: parts.middle,
+                               lastName: parts.last, nickname: nickname, age: age)
     }
 
     private func extractYear(from text: String) -> Int? {
@@ -380,6 +480,7 @@ struct AppleIntelligenceProvider: AIProvider {
 
     private func buildPersonJSON(
         firstName: String, middleName: String?, lastName: String?,
+        nickname: String? = nil,
         birthYear: Int?, gender: String?, isLiving: Bool?,
         relationships: [(type: String, personName: String)]
     ) -> String {
@@ -392,7 +493,7 @@ struct AppleIntelligenceProvider: AIProvider {
 
         return """
         ```json
-        {"firstName": "\(fn)", "middleName": \(mn.map { #""\#($0)""# } ?? "null"), "lastName": \(ln.map { #""\#($0)""# } ?? "null"), "nickname": null, "birthYear": \(birthYear.map(String.init) ?? "null"), "birthPlace": null, "isLiving": \(isLiving.map { $0 ? "true" : "false" } ?? "true"), "deathYear": null, "gender": \(gender.map { #""\#($0)""# } ?? "null"), "relationships": [\(relsJSON)], "isComplete": true}
+        {"firstName": "\(fn)", "middleName": \(mn.map { #""\#($0)""# } ?? "null"), "lastName": \(ln.map { #""\#($0)""# } ?? "null"), "nickname": \(nickname.map { #""\#($0)""# } ?? "null"), "birthYear": \(birthYear.map(String.init) ?? "null"), "birthPlace": null, "isLiving": \(isLiving.map { $0 ? "true" : "false" } ?? "true"), "deathYear": null, "gender": \(gender.map { #""\#($0)""# } ?? "null"), "relationships": [\(relsJSON)], "isComplete": true}
         ```
         """
     }

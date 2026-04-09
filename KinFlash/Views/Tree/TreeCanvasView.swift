@@ -38,6 +38,9 @@ struct TreeCanvasView: View {
         }
         .searchable(text: $searchText, prompt: "Find person")
         .onAppear(perform: refreshLayout)
+        .onChange(of: appState.people.count) {
+            refreshLayout()
+        }
         .sheet(item: $selectedPerson) { person in
             NavigationStack {
                 PersonProfileView(person: person)
