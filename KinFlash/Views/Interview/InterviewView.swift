@@ -70,18 +70,13 @@ struct InterviewView: View {
 
             // Input area
             HStack(spacing: 8) {
-                TextField("Type a message...", text: $inputText, axis: .vertical)
+                TextField("Type a message...", text: $inputText)
                     .textFieldStyle(.roundedBorder)
-                    .lineLimit(1...4)
+                    .submitLabel(.send)
                     .onSubmit(sendMessage)
-
-                Button(action: sendMessage) {
-                    Image(systemName: "arrow.up.circle.fill")
-                        .font(.title2)
-                }
-                .disabled(inputText.trimmingCharacters(in: .whitespaces).isEmpty || isLoading)
             }
-            .padding()
+            .padding(.horizontal)
+            .padding(.vertical, 8)
             .background(.ultraThinMaterial)
         }
         .navigationTitle("Interview")

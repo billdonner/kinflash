@@ -3,12 +3,12 @@ import GRDB
 
 struct TreeCanvasView: View {
     @Environment(AppState.self) private var appState
+    @Environment(\.horizontalSizeClass) private var sizeClass
     @State private var layout: TreeLayout?
     @State private var scale: CGFloat = 1.0
     @State private var offset: CGSize = .zero
     @State private var selectedPerson: Person?
     @State private var showAddPerson = false
-    @State private var showInterviewSheet = false
     @State private var searchText = ""
 
     var body: some View {
@@ -25,9 +25,6 @@ struct TreeCanvasView: View {
                 Menu {
                     Button("Add Person", systemImage: "person.badge.plus") {
                         showAddPerson = true
-                    }
-                    Button("Interview", systemImage: "bubble.left.and.bubble.right") {
-                        showInterviewSheet = true
                     }
                     if layout != nil {
                         Button("Fit All", systemImage: "arrow.up.left.and.arrow.down.right") {
@@ -52,15 +49,6 @@ struct TreeCanvasView: View {
                     appState.refreshPeople()
                     refreshLayout()
                     showAddPerson = false
-                })
-            }
-        }
-        .sheet(isPresented: $showInterviewSheet) {
-            NavigationStack {
-                InterviewView(onComplete: {
-                    showInterviewSheet = false
-                    appState.refreshPeople()
-                    refreshLayout()
                 })
             }
         }
@@ -159,17 +147,10 @@ struct TreeCanvasView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
 
-            HStack(spacing: 16) {
-                Button("Add Person") {
-                    showAddPerson = true
-                }
-                .buttonStyle(.borderedProminent)
-
-                Button("Interview") {
-                    showInterviewSheet = true
-                }
-                .buttonStyle(.bordered)
+            Button("Add Person") {
+                showAddPerson = true
             }
+            .buttonStyle(.borderedProminent)
         }
     }
 
