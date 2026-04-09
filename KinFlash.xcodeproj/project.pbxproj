@@ -50,6 +50,7 @@
 		D3788CE422ED4C4821F3CA70 /* AppleIntelligenceInterviewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D45289F7C2F676FECE942466 /* AppleIntelligenceInterviewTests.swift */; };
 		D38E1FEFE5958671110C1240 /* FlashcardSortTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86B46ADAD7434733E31270B6 /* FlashcardSortTests.swift */; };
 		D68162B9AD98CF57A5DCD341 /* AppleIntelligenceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FE8B545B63086341AB7791 /* AppleIntelligenceProvider.swift */; };
+		D7DEF083484602DC6112AF7D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B25A4AA220F31F95662A7AFE /* Assets.xcassets */; };
 		D81E8BD4533EC8DA0DAE2D24 /* FlashcardGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF30266C67CD89D961A3C318 /* FlashcardGenerator.swift */; };
 		DA7698F5E1C3C9ACB1F10A86 /* AIProviderRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4743084B24C5C4821AA20B47 /* AIProviderRouter.swift */; };
 		DD0ED1D40AC57ADF4D1E3EA2 /* NicknameAndAgeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7377B08700925FC3A4185BC /* NicknameAndAgeTests.swift */; };
@@ -112,6 +113,7 @@
 		A81CF282C435186540D3C2C1 /* OpenAIProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIProvider.swift; sourceTree = "<group>"; };
 		AF0A4DF735622E729B2DE0EB /* InterviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewView.swift; sourceTree = "<group>"; };
 		AF30266C67CD89D961A3C318 /* FlashcardGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashcardGenerator.swift; sourceTree = "<group>"; };
+		B25A4AA220F31F95662A7AFE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B2D81FF65DD292BE4B09C3C7 /* DeckListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckListView.swift; sourceTree = "<group>"; };
 		BC02AB7B23ACEF2758C4E6B1 /* Attachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
 		C76908D5846B64F19BFE64EB /* FlashcardGenerationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashcardGenerationView.swift; sourceTree = "<group>"; };
@@ -254,6 +256,7 @@
 		A42DC98054505E5A22D61606 /* KinFlash */ = {
 			isa = PBXGroup;
 			children = (
+				B25A4AA220F31F95662A7AFE /* Assets.xcassets */,
 				E66B70B33FEF72305B992D3C /* AI */,
 				6831C42B501E12A265925CE8 /* App */,
 				2CD798734E57C3A57776525B /* Database */,
@@ -354,6 +357,7 @@
 			buildConfigurationList = FF0DCDD0DC281C33AF8A6C3A /* Build configuration list for PBXNativeTarget "KinFlash" */;
 			buildPhases = (
 				A0FDF3D1C116A93825516C10 /* Sources */,
+				75D982D7B258A80C63FE1222 /* Resources */,
 				F3BBE66E0521708C7F9C560A /* Frameworks */,
 			);
 			buildRules = (
@@ -424,6 +428,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		75D982D7B258A80C63FE1222 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D7DEF083484602DC6112AF7D /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		3E79D3DCE706EB14D60B8F71 /* Sources */ = {
@@ -589,10 +604,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 16;
 				DEVELOPMENT_TEAM = NEAY582ME4;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_ImageName = LaunchIcon;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -688,10 +705,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 16;
 				DEVELOPMENT_TEAM = NEAY582ME4;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_ImageName = LaunchIcon;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
