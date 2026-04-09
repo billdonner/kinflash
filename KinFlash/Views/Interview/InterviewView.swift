@@ -26,7 +26,7 @@ struct InterviewView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Messages
+            // Messages — takes all available space
             ScrollViewReader { proxy in
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 12) {
@@ -68,17 +68,21 @@ struct InterviewView: View {
                     .padding(.horizontal)
             }
 
-            // Input area
-            HStack(spacing: 8) {
-                TextField("Type a message...", text: $inputText)
-                    .textFieldStyle(.roundedBorder)
-                    .submitLabel(.send)
-                    .onSubmit(sendMessage)
+            // Input bar — pinned to bottom, inside safe area
+            VStack(spacing: 0) {
+                Divider()
+                HStack(spacing: 8) {
+                    TextField("Type a message...", text: $inputText)
+                        .textFieldStyle(.roundedBorder)
+                        .submitLabel(.send)
+                        .onSubmit(sendMessage)
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 8)
             }
-            .padding(.horizontal)
-            .padding(.vertical, 8)
             .background(.ultraThinMaterial)
         }
+        .frame(maxHeight: .infinity)
         .navigationTitle("Interview")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
