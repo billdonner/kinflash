@@ -5,6 +5,12 @@ import GRDB
 struct KinFlashApp: App {
     @State private var appState = AppState()
 
+    init() {
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
+        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"
+        print("=== KinFlash v\(version) build \(build) ===")
+    }
+
     var body: some Scene {
         WindowGroup {
             RootView()

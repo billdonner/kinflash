@@ -29,23 +29,33 @@ struct AppleIntelligenceProvider: AIProvider {
         }
 
         return AsyncThrowingStream { continuation in
-            Task {
-                do {
-                    let (instructions, userPrompt) = buildPrompt(from: messages)
-                    let session = LanguageModelSession(instructions: instructions)
-                    var lastLength = 0
-                    let stream = session.streamResponse(to: userPrompt)
-                    for try await partial in stream {
-                        let current = partial.content
-                        if current.count > lastLength {
-                            let delta = String(current.dropFirst(lastLength))
-                            continuation.yield(delta)
-                            lastLength = current.count
-                        }
+            // Launch the AI work in a task we can cancel
+            let workTask = Task {
+                let (instructions, userPrompt) = buildPrompt(from: messages)
+                let session = LanguageModelSession(instructions: instructions)
+                var lastLength = 0
+                let stream = session.streamResponse(to: userPrompt)
+                for try await partial in stream {
+                    try Task.checkCancellation()
+                    let current = partial.content
+                    if current.count > lastLength {
+                        let delta = String(current.dropFirst(lastLength))
+                        continuation.yield(delta)
+                        lastLength = current.count
                     }
-                    continuation.finish()
-                } catch {
-                    continuation.finish(throwing: error)
+                }
+                continuation.finish()
+            }
+
+            // Launch a watchdog that cancels the work after 15 seconds of no output
+            Task {
+                try? await Task.sleep(for: .seconds(15))
+                if !workTask.isCancelled {
+                    workTask.cancel()
+                    continuation.finish(throwing: AIProviderError.networkError(
+                        NSError(domain: "AppleIntelligence", code: -1,
+                                userInfo: [NSLocalizedDescriptionKey: "Apple Intelligence did not respond within 15 seconds. The on-device model may not be ready. Please try again."])
+                    ))
                 }
             }
         }
