@@ -114,19 +114,12 @@ struct AppleIntelligenceProvider: AIProvider {
             print("[AI] Context trimmed: \(nonSystemMessages.count) → \(trimmed.count) messages")
         }
 
-        var conversationParts: [String] = []
-        for msg in trimmed {
-            switch msg.role {
-            case .system: break
-            case .user: conversationParts.append("User: \(msg.content)")
-            case .assistant: conversationParts.append("Assistant: \(msg.content)")
-            }
-        }
+        // Build the user prompt as just the last user message.
+        // Include brief conversation summary for context, but don't
+        // use "User:"/"Assistant:" prefixes — the model echoes them.
+        let lastUserMsg = trimmed.last { $0.role == .user }?.content ?? "Hello"
 
         let instructions = systemParts.joined(separator: "\n\n")
-        let conversation = conversationParts.joined(separator: "\n\n")
-        let userPrompt = conversation.isEmpty ? "Hello" : conversation + "\n\nAssistant:"
-
-        return (instructions, userPrompt)
+        return (instructions, lastUserMsg)
     }
 }
