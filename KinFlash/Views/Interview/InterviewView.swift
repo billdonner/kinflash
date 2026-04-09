@@ -135,13 +135,21 @@ struct InterviewView: View {
 
     private func loadHistory() {
         guard let db = appState.databaseManager else { return }
+
+        // Auto-clear stale history if tree is empty (no people = fresh start)
+        if appState.people.isEmpty {
+            try? db.dbQueue.write { database in
+                try database.execute(sql: "DELETE FROM interviewMessage")
+            }
+        }
+
         do {
             let saved = try db.dbQueue.read { database in
                 try PersistedMessage.order(Column("createdAt").asc).fetchAll(database)
             }
 
             if saved.isEmpty {
-                // First time — add the greeting
+                // First time or auto-cleared — add the greeting
                 let greeting = "Hi! I'm going to help you build your family tree. Let's start with you. What's your full name?"
                 let msg = persistMessage(role: .assistant, content: greeting)
                 messages = [msg]
@@ -318,11 +326,23 @@ struct InterviewView: View {
         let pattern = #"```json[^\n]*\n([\s\S]*?)\n\s*```"#
         guard let regex = try? NSRegularExpression(pattern: pattern) else { return [] }
         let nsRange = NSRange(text.startIndex..., in: text)
-        return regex.matches(in: text, range: nsRange).compactMap { match -> ExtractedPerson? in
-            guard let range = Range(match.range(at: 1), in: text) else { return nil }
-            guard let data = String(text[range]).data(using: .utf8) else { return nil }
-            return try? JSONDecoder().decode(ExtractedPerson.self, from: data)
+        var results: [ExtractedPerson] = []
+
+        for match in regex.matches(in: text, range: nsRange) {
+            guard let range = Range(match.range(at: 1), in: text) else { continue }
+            let jsonStr = String(text[range]).trimmingCharacters(in: .whitespacesAndNewlines)
+            guard let data = jsonStr.data(using: .utf8) else { continue }
+
+            // Try single object first
+            if let person = try? JSONDecoder().decode(ExtractedPerson.self, from: data) {
+                results.append(person)
+            }
+            // Try array of objects (model sometimes wraps in [...])
+            else if let people = try? JSONDecoder().decode([ExtractedPerson].self, from: data) {
+                results.append(contentsOf: people)
+            }
         }
+        return results
     }
 
     private func cleanResponse(_ text: String) -> String {
@@ -342,6 +362,18 @@ struct InterviewView: View {
 
         // Remove stray opening/closing fences
         cleaned = cleaned.replacingOccurrences(of: "```", with: "")
+
+        // Remove meta-references to JSON that the model sometimes adds
+        let metaPhrases = [
+            "Here's your JSON block:", "Here's the JSON block:",
+            "Here are your JSON blocks:", "Here are the JSON blocks:",
+            "I've extracted the following family members:",
+            "I've extracted the following:",
+            "Here's the extracted data:",
+        ]
+        for phrase in metaPhrases {
+            cleaned = cleaned.replacingOccurrences(of: phrase, with: "")
+        }
 
         return cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
     }

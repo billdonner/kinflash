@@ -39,6 +39,7 @@
 		A1057DCE77517D394308D131 /* AIProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3DBCCDA651391E962E2F10 /* AIProvider.swift */; };
 		A34CFB9264EA987BFF12685D /* GEDCOMParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65267A59B66DC2A246C97B2C /* GEDCOMParser.swift */; };
 		A744B74831671FD8EA9F00D3 /* DeviceOnlyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02F48BF653EEEF59D003DB9E /* DeviceOnlyTests.swift */; };
+		A7E3C343C0C99C6CF32324BA /* JSONExtractionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D4FBD6CD6EA8B20520D0009 /* JSONExtractionTests.swift */; };
 		A8058B3173E6B32019429AA8 /* PersonCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6F9B81473DE88E2A516DAB /* PersonCardView.swift */; };
 		A8A315C2FD0A0697D125C5AC /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = D5FDEB0576E00F3FE40918C2 /* GRDB */; };
 		A8DB07B89AF9F8575820B410 /* PDFExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B49270F6891A73066879C9 /* PDFExporter.swift */; };
@@ -94,6 +95,7 @@
 		2E2A2AAFAEC25ECEF6B6A19C /* Flashcard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Flashcard.swift; sourceTree = "<group>"; };
 		2F8F9A085200E9364BA89F12 /* InterviewMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewMessage.swift; sourceTree = "<group>"; };
 		31C826E18226B5F00316C274 /* DatabaseMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseMigrationTests.swift; sourceTree = "<group>"; };
+		3D4FBD6CD6EA8B20520D0009 /* JSONExtractionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONExtractionTests.swift; sourceTree = "<group>"; };
 		4085A04DED8392B15BB93E91 /* FlashcardGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashcardGeneratorTests.swift; sourceTree = "<group>"; };
 		4237967C417515049A82B89E /* EdgeCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeCaseTests.swift; sourceTree = "<group>"; };
 		44E8ECB5B5FFA4A4D0AD328A /* TreeLayoutEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeLayoutEngineTests.swift; sourceTree = "<group>"; };
@@ -233,6 +235,7 @@
 				55BFD098F9AAD95C803A8EFF /* GEDCOMExporterTests.swift */,
 				6DFD708B0B90F350814A97EF /* GEDCOMParserTests.swift */,
 				9D1FFD8157665A5085A9D4EF /* InterviewServiceTests.swift */,
+				3D4FBD6CD6EA8B20520D0009 /* JSONExtractionTests.swift */,
 				E7377B08700925FC3A4185BC /* NicknameAndAgeTests.swift */,
 				11B99C892513E73FCB5FCD5C /* RelationshipResolverTests.swift */,
 				6ADE8CEE31B530388D4F16C2 /* TreeLayoutDisconnectedTests.swift */,
@@ -472,6 +475,7 @@
 				58961E5EF76895C1D7B1E055 /* GEDCOMExporterTests.swift in Sources */,
 				A0EC9CCED73288A10BEAEBDC /* GEDCOMParserTests.swift in Sources */,
 				F5907EE0FF3C58DF90F74FC8 /* InterviewServiceTests.swift in Sources */,
+				A7E3C343C0C99C6CF32324BA /* JSONExtractionTests.swift in Sources */,
 				DD0ED1D40AC57ADF4D1E3EA2 /* NicknameAndAgeTests.swift in Sources */,
 				2D98A9D08112D5697E5F2077 /* RelationshipResolverTests.swift in Sources */,
 				9D60CB09A40B33977A66A98D /* TreeLayoutDisconnectedTests.swift in Sources */,
@@ -624,7 +628,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = KinFlash/KinFlash.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CURRENT_PROJECT_VERSION = 35;
+				CURRENT_PROJECT_VERSION = 36;
 				DEVELOPMENT_TEAM = NEAY582ME4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;
@@ -728,7 +732,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = KinFlash/KinFlash.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CURRENT_PROJECT_VERSION = 35;
+				CURRENT_PROJECT_VERSION = 36;
 				DEVELOPMENT_TEAM = NEAY582ME4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;
