@@ -8,33 +8,46 @@
 
 /* Begin PBXBuildFile section */
 		0574E4BF0F8B45B58B40284D /* TreeLayoutEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ADCB23D89F8ECDB4C800CB3 /* TreeLayoutEngine.swift */; };
+		06029F7A0FED3D83DE29B2C5 /* PeopleListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02590FD6E245E74E291A441D /* PeopleListView.swift */; };
 		12475FE721091D38BCF3D6D0 /* KinFlashApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8FB4E0E6CA772FA94FB362 /* KinFlashApp.swift */; };
 		183D648FA805977F248734B5 /* GEDCOMExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D6F353F0EFBC30EEB1ABBFA /* GEDCOMExporter.swift */; };
 		2D1D67DA3C19BB80A2584251 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE7C7AB23CA490084777FB0 /* DatabaseManager.swift */; };
 		2D98A9D08112D5697E5F2077 /* RelationshipResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B99C892513E73FCB5FCD5C /* RelationshipResolverTests.swift */; };
 		2FBA7E54DEE698067C7FA10D /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 8273D935D05E910304E2D9DB /* GRDB */; };
+		324A556AE409D36494770F05 /* PersonEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F07B6E5FE5A02EE19AEB8065 /* PersonEditView.swift */; };
 		4C15D501FB3B4168F179E0F4 /* FlashcardGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4085A04DED8392B15BB93E91 /* FlashcardGeneratorTests.swift */; };
 		58961E5EF76895C1D7B1E055 /* GEDCOMExporterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BFD098F9AAD95C803A8EFF /* GEDCOMExporterTests.swift */; };
+		68EE1E3479ABE37CDB6E5363 /* InterviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0A4DF735622E729B2DE0EB /* InterviewView.swift */; };
 		6C76E5373E3729B3A906019C /* DatabaseMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C826E18226B5F00316C274 /* DatabaseMigrationTests.swift */; };
+		709360039C3F6FA125A60833 /* OnboardingFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58ED9F2AC880066F14B68616 /* OnboardingFlow.swift */; };
 		7C10547F33FEEA6BC55824D1 /* AnthropicProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC9DB2E617C4CFBC1DC0E34 /* AnthropicProvider.swift */; };
+		7F7F67D97AC7125B2113D619 /* TreeCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F827B53A5206F6BBDC699C23 /* TreeCanvasView.swift */; };
 		807FD7AC8FB76B05FCA77AC6 /* AttachmentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FDEED002E2BCC6DD1CACB0 /* AttachmentManager.swift */; };
 		82A6C59DA34FF8AE9D0C5C73 /* InterviewService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48BC4F25601770CBB201F9A3 /* InterviewService.swift */; };
+		86599AE3996688C1F7858593 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 710FB137B549BC5BEC6E4629 /* SettingsView.swift */; };
 		87690D0F3D3480F6C7B3FAD6 /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC02AB7B23ACEF2758C4E6B1 /* Attachment.swift */; };
 		9A76CD613C95B8596AE1ABB4 /* TreeLayoutEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E8ECB5B5FFA4A4D0AD328A /* TreeLayoutEngineTests.swift */; };
 		9D6323C0F7020098FFE648AC /* OpenAIProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81CF282C435186540D3C2C1 /* OpenAIProvider.swift */; };
 		A0EC9CCED73288A10BEAEBDC /* GEDCOMParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DFD708B0B90F350814A97EF /* GEDCOMParserTests.swift */; };
 		A1057DCE77517D394308D131 /* AIProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3DBCCDA651391E962E2F10 /* AIProvider.swift */; };
 		A34CFB9264EA987BFF12685D /* GEDCOMParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65267A59B66DC2A246C97B2C /* GEDCOMParser.swift */; };
+		A8058B3173E6B32019429AA8 /* PersonCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6F9B81473DE88E2A516DAB /* PersonCardView.swift */; };
 		A8A315C2FD0A0697D125C5AC /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = D5FDEB0576E00F3FE40918C2 /* GRDB */; };
 		A8DB07B89AF9F8575820B410 /* PDFExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B49270F6891A73066879C9 /* PDFExporter.swift */; };
+		ABFA39207B4C43057082928E /* FlashcardGenerationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C76908D5846B64F19BFE64EB /* FlashcardGenerationView.swift */; };
+		ACFC99E8514DD230C9CCFECC /* PersonProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2090C56F34E35875DDAAF9F6 /* PersonProfileView.swift */; };
 		BA40705F5798AFE29CE05177 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0B53CBEC72F5D0AEB8987 /* AppSettings.swift */; };
 		C059B4E10A180B99285161D3 /* DataValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94350573207388045062C5F8 /* DataValidationTests.swift */; };
 		C1FA3221C012619233ADDB05 /* TreeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E473798B99F01F01DDAB55D9 /* TreeService.swift */; };
 		CE10529894703931A45751AA /* Flashcard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E2A2AAFAEC25ECEF6B6A19C /* Flashcard.swift */; };
+		CE6A43FCDA676A3247234046 /* DeckListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2D81FF65DD292BE4B09C3C7 /* DeckListView.swift */; };
 		D81E8BD4533EC8DA0DAE2D24 /* FlashcardGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF30266C67CD89D961A3C318 /* FlashcardGenerator.swift */; };
 		DA7698F5E1C3C9ACB1F10A86 /* AIProviderRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4743084B24C5C4821AA20B47 /* AIProviderRouter.swift */; };
+		E6613CA63B0997EF97135CC0 /* AddRelationshipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D15091E155431D4AAA52CF1 /* AddRelationshipView.swift */; };
 		E89CCFBE1B8994A077921A08 /* Relationship.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DB3761094AF30CF7DD6860 /* Relationship.swift */; };
+		EECB93020DB71B5137863867 /* StudyModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB5E099813B11AD0ECDACCD /* StudyModeView.swift */; };
 		F30031709E985FEBCC7182ED /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E50F3596AB95C5F310C4638 /* KeychainManager.swift */; };
+		F33ED3F359CEE600E3B34A1E /* GEDCOMImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73A87F9CF864FD7491E773A /* GEDCOMImportView.swift */; };
 		F623C751B30FFFEDFA49D64D /* RelationshipResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5A171EF10D7B565D67F43D /* RelationshipResolver.swift */; };
 		F868689827BF9B352E715B5F /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2391A5CD811F4A2E263E4873 /* Person.swift */; };
 /* End PBXBuildFile section */
@@ -50,12 +63,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		02590FD6E245E74E291A441D /* PeopleListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleListView.swift; sourceTree = "<group>"; };
 		02B49270F6891A73066879C9 /* PDFExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFExporter.swift; sourceTree = "<group>"; };
 		05FDEED002E2BCC6DD1CACB0 /* AttachmentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentManager.swift; sourceTree = "<group>"; };
 		0A8FB4E0E6CA772FA94FB362 /* KinFlashApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KinFlashApp.swift; sourceTree = "<group>"; };
 		0E50F3596AB95C5F310C4638 /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
 		11B99C892513E73FCB5FCD5C /* RelationshipResolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelationshipResolverTests.swift; sourceTree = "<group>"; };
 		1CC9DB2E617C4CFBC1DC0E34 /* AnthropicProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnthropicProvider.swift; sourceTree = "<group>"; };
+		1D15091E155431D4AAA52CF1 /* AddRelationshipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRelationshipView.swift; sourceTree = "<group>"; };
+		2090C56F34E35875DDAAF9F6 /* PersonProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonProfileView.swift; sourceTree = "<group>"; };
 		2391A5CD811F4A2E263E4873 /* Person.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
 		2E2A2AAFAEC25ECEF6B6A19C /* Flashcard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Flashcard.swift; sourceTree = "<group>"; };
 		31C826E18226B5F00316C274 /* DatabaseMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseMigrationTests.swift; sourceTree = "<group>"; };
@@ -65,19 +81,29 @@
 		48BC4F25601770CBB201F9A3 /* InterviewService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewService.swift; sourceTree = "<group>"; };
 		53B0B53CBEC72F5D0AEB8987 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		55BFD098F9AAD95C803A8EFF /* GEDCOMExporterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GEDCOMExporterTests.swift; sourceTree = "<group>"; };
+		58ED9F2AC880066F14B68616 /* OnboardingFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlow.swift; sourceTree = "<group>"; };
 		63DB3761094AF30CF7DD6860 /* Relationship.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Relationship.swift; sourceTree = "<group>"; };
 		65267A59B66DC2A246C97B2C /* GEDCOMParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GEDCOMParser.swift; sourceTree = "<group>"; };
 		6DFD708B0B90F350814A97EF /* GEDCOMParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GEDCOMParserTests.swift; sourceTree = "<group>"; };
+		6F6F9B81473DE88E2A516DAB /* PersonCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonCardView.swift; sourceTree = "<group>"; };
+		710FB137B549BC5BEC6E4629 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		7ADCB23D89F8ECDB4C800CB3 /* TreeLayoutEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeLayoutEngine.swift; sourceTree = "<group>"; };
 		8D6F353F0EFBC30EEB1ABBFA /* GEDCOMExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GEDCOMExporter.swift; sourceTree = "<group>"; };
 		94350573207388045062C5F8 /* DataValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataValidationTests.swift; sourceTree = "<group>"; };
 		9932873C357A7322B0B473D1 /* KinFlash.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = KinFlash.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A81CF282C435186540D3C2C1 /* OpenAIProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIProvider.swift; sourceTree = "<group>"; };
+		AF0A4DF735622E729B2DE0EB /* InterviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewView.swift; sourceTree = "<group>"; };
 		AF30266C67CD89D961A3C318 /* FlashcardGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashcardGenerator.swift; sourceTree = "<group>"; };
+		B2D81FF65DD292BE4B09C3C7 /* DeckListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckListView.swift; sourceTree = "<group>"; };
 		BC02AB7B23ACEF2758C4E6B1 /* Attachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
+		C76908D5846B64F19BFE64EB /* FlashcardGenerationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashcardGenerationView.swift; sourceTree = "<group>"; };
 		CF5A171EF10D7B565D67F43D /* RelationshipResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelationshipResolver.swift; sourceTree = "<group>"; };
 		D5A9EB7ACED4117488590E13 /* KinFlashTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = KinFlashTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E473798B99F01F01DDAB55D9 /* TreeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeService.swift; sourceTree = "<group>"; };
+		E73A87F9CF864FD7491E773A /* GEDCOMImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GEDCOMImportView.swift; sourceTree = "<group>"; };
+		EEB5E099813B11AD0ECDACCD /* StudyModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyModeView.swift; sourceTree = "<group>"; };
+		F07B6E5FE5A02EE19AEB8065 /* PersonEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonEditView.swift; sourceTree = "<group>"; };
+		F827B53A5206F6BBDC699C23 /* TreeCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeCanvasView.swift; sourceTree = "<group>"; };
 		FB3DBCCDA651391E962E2F10 /* AIProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIProvider.swift; sourceTree = "<group>"; };
 		FFE7C7AB23CA490084777FB0 /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -114,6 +140,9 @@
 		0BCA5F600313BCC296EB65F2 /* Tree */ = {
 			isa = PBXGroup;
 			children = (
+				02590FD6E245E74E291A441D /* PeopleListView.swift */,
+				6F6F9B81473DE88E2A516DAB /* PersonCardView.swift */,
+				F827B53A5206F6BBDC699C23 /* TreeCanvasView.swift */,
 			);
 			path = Tree;
 			sourceTree = "<group>";
@@ -174,6 +203,7 @@
 		7D4A0AFFDBC8662C45980EB8 /* Interview */ = {
 			isa = PBXGroup;
 			children = (
+				AF0A4DF735622E729B2DE0EB /* InterviewView.swift */,
 			);
 			path = Interview;
 			sourceTree = "<group>";
@@ -229,6 +259,9 @@
 		C57411C6BE412A301948DA22 /* Profile */ = {
 			isa = PBXGroup;
 			children = (
+				1D15091E155431D4AAA52CF1 /* AddRelationshipView.swift */,
+				F07B6E5FE5A02EE19AEB8065 /* PersonEditView.swift */,
+				2090C56F34E35875DDAAF9F6 /* PersonProfileView.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -236,6 +269,8 @@
 		C811E9E63848B5E77F103F74 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				E73A87F9CF864FD7491E773A /* GEDCOMImportView.swift */,
+				710FB137B549BC5BEC6E4629 /* SettingsView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -243,6 +278,7 @@
 		E61FAB40FBBDAA7AAA027330 /* Onboarding */ = {
 			isa = PBXGroup;
 			children = (
+				58ED9F2AC880066F14B68616 /* OnboardingFlow.swift */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -261,6 +297,9 @@
 		E9096C7C2B5F5A47F637FE12 /* Flashcards */ = {
 			isa = PBXGroup;
 			children = (
+				B2D81FF65DD292BE4B09C3C7 /* DeckListView.swift */,
+				C76908D5846B64F19BFE64EB /* FlashcardGenerationView.swift */,
+				EEB5E099813B11AD0ECDACCD /* StudyModeView.swift */,
 			);
 			path = Flashcards;
 			sourceTree = "<group>";
@@ -371,23 +410,36 @@
 			files = (
 				A1057DCE77517D394308D131 /* AIProvider.swift in Sources */,
 				DA7698F5E1C3C9ACB1F10A86 /* AIProviderRouter.swift in Sources */,
+				E6613CA63B0997EF97135CC0 /* AddRelationshipView.swift in Sources */,
 				7C10547F33FEEA6BC55824D1 /* AnthropicProvider.swift in Sources */,
 				BA40705F5798AFE29CE05177 /* AppSettings.swift in Sources */,
 				87690D0F3D3480F6C7B3FAD6 /* Attachment.swift in Sources */,
 				807FD7AC8FB76B05FCA77AC6 /* AttachmentManager.swift in Sources */,
 				2D1D67DA3C19BB80A2584251 /* DatabaseManager.swift in Sources */,
+				CE6A43FCDA676A3247234046 /* DeckListView.swift in Sources */,
 				CE10529894703931A45751AA /* Flashcard.swift in Sources */,
+				ABFA39207B4C43057082928E /* FlashcardGenerationView.swift in Sources */,
 				D81E8BD4533EC8DA0DAE2D24 /* FlashcardGenerator.swift in Sources */,
 				183D648FA805977F248734B5 /* GEDCOMExporter.swift in Sources */,
+				F33ED3F359CEE600E3B34A1E /* GEDCOMImportView.swift in Sources */,
 				A34CFB9264EA987BFF12685D /* GEDCOMParser.swift in Sources */,
 				82A6C59DA34FF8AE9D0C5C73 /* InterviewService.swift in Sources */,
+				68EE1E3479ABE37CDB6E5363 /* InterviewView.swift in Sources */,
 				F30031709E985FEBCC7182ED /* KeychainManager.swift in Sources */,
 				12475FE721091D38BCF3D6D0 /* KinFlashApp.swift in Sources */,
+				709360039C3F6FA125A60833 /* OnboardingFlow.swift in Sources */,
 				9D6323C0F7020098FFE648AC /* OpenAIProvider.swift in Sources */,
 				A8DB07B89AF9F8575820B410 /* PDFExporter.swift in Sources */,
+				06029F7A0FED3D83DE29B2C5 /* PeopleListView.swift in Sources */,
 				F868689827BF9B352E715B5F /* Person.swift in Sources */,
+				A8058B3173E6B32019429AA8 /* PersonCardView.swift in Sources */,
+				324A556AE409D36494770F05 /* PersonEditView.swift in Sources */,
+				ACFC99E8514DD230C9CCFECC /* PersonProfileView.swift in Sources */,
 				E89CCFBE1B8994A077921A08 /* Relationship.swift in Sources */,
 				F623C751B30FFFEDFA49D64D /* RelationshipResolver.swift in Sources */,
+				86599AE3996688C1F7858593 /* SettingsView.swift in Sources */,
+				EECB93020DB71B5137863867 /* StudyModeView.swift in Sources */,
+				7F7F67D97AC7125B2113D619 /* TreeCanvasView.swift in Sources */,
 				0574E4BF0F8B45B58B40284D /* TreeLayoutEngine.swift in Sources */,
 				C1FA3221C012619233ADDB05 /* TreeService.swift in Sources */,
 			);
@@ -490,7 +542,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_VALUES = "UILaunchScreen={}; UISupportedInterfaceOrientations=UIInterfaceOrientationPortrait; UISupportedInterfaceOrientations~ipad=UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight;";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -586,7 +638,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_VALUES = "UILaunchScreen={}; UISupportedInterfaceOrientations=UIInterfaceOrientationPortrait; UISupportedInterfaceOrientations~ipad=UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight;";
 				LD_RUNPATH_SEARCH_PATHS = (
