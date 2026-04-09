@@ -14,23 +14,9 @@ struct AppleIntelligenceProvider: AIProvider {
             return try await LocalInterviewProvider().chat(messages: messages)
         }
 
-        let session = LanguageModelSession()
-
-        // Build the prompt from messages
-        var prompt = ""
-        for msg in messages {
-            switch msg.role {
-            case .system:
-                prompt += "System: \(msg.content)\n\n"
-            case .user:
-                prompt += "User: \(msg.content)\n\n"
-            case .assistant:
-                prompt += "Assistant: \(msg.content)\n\n"
-            }
-        }
-        prompt += "Assistant:"
-
-        let response = try await session.respond(to: prompt)
+        let (instructions, userPrompt) = buildPrompt(from: messages)
+        let session = LanguageModelSession(instructions: instructions)
+        let response = try await session.respond(to: userPrompt)
         return response.content
     }
 
@@ -42,30 +28,59 @@ struct AppleIntelligenceProvider: AIProvider {
         return AsyncThrowingStream { continuation in
             Task {
                 do {
-                    let session = LanguageModelSession()
+                    let (instructions, userPrompt) = buildPrompt(from: messages)
+                    let session = LanguageModelSession(instructions: instructions)
 
-                    var prompt = ""
-                    for msg in messages {
-                        switch msg.role {
-                        case .system:
-                            prompt += "System: \(msg.content)\n\n"
-                        case .user:
-                            prompt += "User: \(msg.content)\n\n"
-                        case .assistant:
-                            prompt += "Assistant: \(msg.content)\n\n"
-                        }
-                    }
-                    prompt += "Assistant:"
-
-                    let stream = session.streamResponse(to: prompt)
+                    var lastLength = 0
+                    let stream = session.streamResponse(to: userPrompt)
                     for try await partial in stream {
-                        continuation.yield(partial.content)
+                        // partial.content is the full response so far; yield the delta
+                        let current = partial.content
+                        if current.count > lastLength {
+                            let delta = String(current.dropFirst(lastLength))
+                            continuation.yield(delta)
+                            lastLength = current.count
+                        }
                     }
                     continuation.finish()
                 } catch {
-                    continuation.finish(throwing: error)
+                    // If FoundationModels fails, fall back to local provider
+                    do {
+                        let fallback = try await LocalInterviewProvider().chat(messages: messages)
+                        continuation.yield(fallback)
+                        continuation.finish()
+                    } catch {
+                        continuation.finish(throwing: error)
+                    }
                 }
             }
         }
+    }
+
+    // MARK: - Prompt Building
+
+    /// Separate system instructions from the conversation and build the final user prompt.
+    /// FoundationModels uses `Instructions` (system) + a single user string per turn.
+    /// We concatenate the conversation history into the user prompt so the model has context.
+    private func buildPrompt(from messages: [AIMessage]) -> (instructions: String, userPrompt: String) {
+        var systemParts: [String] = []
+        var conversationParts: [String] = []
+
+        for msg in messages {
+            switch msg.role {
+            case .system:
+                systemParts.append(msg.content)
+            case .user:
+                conversationParts.append("User: \(msg.content)")
+            case .assistant:
+                conversationParts.append("Assistant: \(msg.content)")
+            }
+        }
+
+        let instructions = systemParts.joined(separator: "\n\n")
+        let conversation = conversationParts.joined(separator: "\n\n")
+        let userPrompt = conversation.isEmpty ? "Hello" : conversation + "\n\nAssistant:"
+
+        return (instructions, userPrompt)
     }
 }
