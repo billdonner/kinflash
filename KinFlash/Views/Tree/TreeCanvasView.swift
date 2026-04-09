@@ -104,7 +104,6 @@ struct TreeCanvasView: View {
                     }
 
                     // Person cards
-                    let nodeMap = Dictionary(uniqueKeysWithValues: layout.nodes.map { ($0.personId, $0) })
                     let centerX = layout.totalSize.width / 2
 
                     ForEach(layout.nodes, id: \.personId) { node in

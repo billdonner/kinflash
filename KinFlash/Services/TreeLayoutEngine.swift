@@ -37,8 +37,6 @@ struct TreeLayoutEngine: Sendable {
         let people = try dbQueue.read { db in try Person.fetchAll(db) }
         let relationships = try dbQueue.read { db in try Relationship.fetchAll(db) }
 
-        let personMap = Dictionary(uniqueKeysWithValues: people.map { ($0.id, $0) })
-
         // Build adjacency
         var parentOf: [UUID: [UUID]] = [:]  // parent → [children]
         var childOf: [UUID: [UUID]] = [:]   // child → [parents]
