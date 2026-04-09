@@ -7,9 +7,12 @@ struct AppleIntelligenceProvider: AIProvider {
 
     var isAvailable: Bool {
         #if targetEnvironment(macCatalyst) && DEBUG
+        print("[AI] AppleIntelligence: disabled on Mac Catalyst debug builds (sandbox blocks XPC)")
         return false
         #else
-        return SystemLanguageModel.default.isAvailable
+        let available = SystemLanguageModel.default.isAvailable
+        print("[AI] AppleIntelligence: SystemLanguageModel.isAvailable = \(available)")
+        return available
         #endif
     }
 
@@ -18,8 +21,10 @@ struct AppleIntelligenceProvider: AIProvider {
             throw AIProviderError.notAvailable
         }
         let (instructions, userPrompt) = buildPrompt(from: messages)
+        print("[AI] AppleIntelligence.chat: sending \(userPrompt.count) chars to LanguageModelSession")
         let session = LanguageModelSession(instructions: instructions)
         let response = try await session.respond(to: userPrompt)
+        print("[AI] AppleIntelligence.chat: got \(response.content.count) char response")
         return response.content
     }
 
@@ -28,13 +33,18 @@ struct AppleIntelligenceProvider: AIProvider {
             return AsyncThrowingStream { $0.finish(throwing: AIProviderError.notAvailable) }
         }
 
+        let (instructions, userPrompt) = buildPrompt(from: messages)
+        print("[AI] AppleIntelligence.stream: starting with \(userPrompt.count) chars, \(messages.count) messages")
+
         return AsyncThrowingStream { continuation in
-            // Launch the AI work in a task we can cancel
             let workTask = Task {
-                let (instructions, userPrompt) = buildPrompt(from: messages)
+                print("[AI] AppleIntelligence.stream: creating LanguageModelSession...")
                 let session = LanguageModelSession(instructions: instructions)
+                print("[AI] AppleIntelligence.stream: calling streamResponse...")
                 var lastLength = 0
+                var tokenCount = 0
                 let stream = session.streamResponse(to: userPrompt)
+                print("[AI] AppleIntelligence.stream: entering for-await loop...")
                 for try await partial in stream {
                     try Task.checkCancellation()
                     let current = partial.content
@@ -42,15 +52,21 @@ struct AppleIntelligenceProvider: AIProvider {
                         let delta = String(current.dropFirst(lastLength))
                         continuation.yield(delta)
                         lastLength = current.count
+                        tokenCount += 1
+                        if tokenCount == 1 {
+                            print("[AI] AppleIntelligence.stream: first token received!")
+                        }
                     }
                 }
+                print("[AI] AppleIntelligence.stream: complete, \(tokenCount) tokens, \(lastLength) chars total")
                 continuation.finish()
             }
 
-            // Launch a watchdog that cancels the work after 15 seconds of no output
+            // Watchdog: cancel if no response within 15 seconds
             Task {
                 try? await Task.sleep(for: .seconds(15))
                 if !workTask.isCancelled {
+                    print("[AI] AppleIntelligence.stream: WATCHDOG FIRED — no response in 15 seconds, cancelling")
                     workTask.cancel()
                     continuation.finish(throwing: AIProviderError.networkError(
                         NSError(domain: "AppleIntelligence", code: -1,

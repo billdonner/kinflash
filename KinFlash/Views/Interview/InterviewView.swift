@@ -245,6 +245,10 @@ struct InterviewView: View {
         let provider = router.provider(for: settings?.selectedAIProvider, model: settings?.selectedModel)
         let service = InterviewService(dbQueue: db.dbQueue, aiProvider: provider)
 
+        print("[Interview] User said: \"\(text)\"")
+        print("[Interview] Conversation has \(conversationHistory.count) prior messages")
+        print("[Interview] Starting stream...")
+
         var fullResponse = ""
         streamingText = ""
 
@@ -254,10 +258,13 @@ struct InterviewView: View {
                 conversationHistory: conversationHistory
             )
 
+            var chunkCount = 0
             for try await chunk in stream {
                 fullResponse += chunk
+                chunkCount += 1
                 streamingText = cleanResponse(fullResponse)
             }
+            print("[Interview] Stream complete: \(chunkCount) chunks, \(fullResponse.count) chars")
 
             // Streaming complete — persist and finalize
             let finalText = cleanResponse(fullResponse)
@@ -265,29 +272,37 @@ struct InterviewView: View {
             let assistantMsg = persistMessage(role: .assistant, content: finalText)
             messages.append(assistantMsg)
             conversationHistory.append(AIMessage(role: .assistant, content: fullResponse))
+            print("[Interview] Assistant response (\(finalText.count) chars displayed): \(finalText.prefix(120))...")
 
             // Extract ALL person JSON blocks
             let allExtracted = extractAllPersonJSON(from: fullResponse)
+            print("[Interview] Extracted \(allExtracted.count) person(s) from response")
+
             for person in allExtracted where person.isComplete {
+                print("[Interview] Saving: \(person.firstName) \(person.lastName ?? "") [rels: \(person.relationships.count)]")
                 do {
                     let saved = try service.saveExtractedPerson(person)
                     extractedCount += 1
+                    print("[Interview] Saved as \(saved.id) — \(saved.displayName)")
                     if appState.rootPersonId == nil {
                         appState.setRootPerson(saved.id)
+                        print("[Interview] Set as root person")
                     }
                 } catch {
+                    print("[Interview] Save failed: \(error)")
                     errorMessage = "Failed to save: \(error.localizedDescription)"
                 }
             }
             if !allExtracted.isEmpty {
                 appState.refreshPeople()
+                print("[Interview] Refreshed people list, now \(appState.people.count) total")
             }
 
             isLoading = false
         } catch {
+            print("[Interview] ERROR: \(error)")
             streamingText = ""
             isLoading = false
-            // Show retry dialog instead of falling back
             pendingRetryText = text
             retryErrorDetail = error.localizedDescription
             showRetryAlert = true
