@@ -10,7 +10,13 @@ struct AppleIntelligenceProvider: AIProvider {
     private let timeoutSeconds: Double = 120
 
     var isAvailable: Bool {
-        SystemLanguageModel.default.isAvailable
+        #if targetEnvironment(macCatalyst)
+        // FoundationModels XPC is sandbox-blocked on Mac Catalyst debug builds.
+        // Use local provider until Apple fixes the sandbox entitlement.
+        return false
+        #else
+        return SystemLanguageModel.default.isAvailable
+        #endif
     }
 
     func chat(messages: [AIMessage]) async throws -> String {
