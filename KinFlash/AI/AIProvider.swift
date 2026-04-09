@@ -57,6 +57,7 @@ extension AIProvider {
         // Strip any markdown code fences
         let cleaned = response
             .replacingOccurrences(of: "```json", with: "")
+            .replacingOccurrences(of: "```json fences", with: "")
             .replacingOccurrences(of: "```", with: "")
             .trimmingCharacters(in: .whitespacesAndNewlines)
 

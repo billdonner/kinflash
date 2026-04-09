@@ -119,7 +119,7 @@ final class DeviceOnlyTests: XCTestCase {
         print("[DeviceTest] Hallucination check response: \(response)")
 
         // Count JSON blocks — should be 0 or 1 (just Alice), never more
-        let jsonPattern = #"```json"#
+        let jsonPattern = "```json"
         let jsonCount = response.components(separatedBy: jsonPattern).count - 1
         XCTAssertLessThanOrEqual(jsonCount, 1,
             "Should extract at most 1 person (Alice), got \(jsonCount) JSON blocks. Model may be hallucinating.")
@@ -195,7 +195,7 @@ final class DeviceOnlyTests: XCTestCase {
     // MARK: - Helpers
 
     private func extractAllJSON(from text: String) -> [ExtractedPerson] {
-        let pattern = #"```json\s*([\s\S]*?)\s*```"#
+        let pattern = #"```json[^\n]*\n([\s\S]*?)\n\s*```"#
         guard let regex = try? NSRegularExpression(pattern: pattern) else { return [] }
         let nsRange = NSRange(text.startIndex..., in: text)
         return regex.matches(in: text, range: nsRange).compactMap { match in

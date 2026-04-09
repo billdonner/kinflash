@@ -37,8 +37,16 @@ struct InterviewService: Sendable {
         - Ask about family members one category at a time: first parents, then spouse, then children, then siblings, then others.
         - Keep questions short and friendly.
 
-        When the user provides a name, output a JSON block like this (use ```json fences):
+        When the user provides a name, output a JSON block wrapped in triple backticks with the word json:
+
+        ```json
         {"firstName":"...","middleName":null,"lastName":"...","nickname":null,"birthYear":null,"birthPlace":null,"isLiving":true,"deathYear":null,"gender":null,"relationships":[],"isComplete":true}
+        ```
+
+        IMPORTANT: The opening line must be EXACTLY three backticks followed by json and nothing else.
+        Then the JSON on the next line. Then three backticks to close.
+
+        Also include a short friendly message BEFORE the JSON block, like "Got it!" or "Nice to meet you!"
 
         Fill in only what the user actually stated. Use null for anything not mentioned.
         Relationship types: "parent" (is parent of), "child" (is child of), "spouse", "sibling".
@@ -260,7 +268,7 @@ struct InterviewService: Sendable {
     // MARK: - JSON Extraction
 
     private func extractPersonJSON(from text: String) -> ExtractedPerson? {
-        let pattern = #"```json\s*([\s\S]*?)\s*```"#
+        let pattern = #"```json[^\n]*\n([\s\S]*?)\n\s*```"#
         guard let regex = try? NSRegularExpression(pattern: pattern),
               let match = regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
               let range = Range(match.range(at: 1), in: text) else {

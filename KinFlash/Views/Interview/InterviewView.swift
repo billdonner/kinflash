@@ -268,7 +268,11 @@ struct InterviewView: View {
             print("[Interview] RAW response: \(fullResponse)")
 
             // Streaming complete — persist and finalize
-            let finalText = cleanResponse(fullResponse)
+            var finalText = cleanResponse(fullResponse)
+            if finalText.isEmpty {
+                // Model returned only JSON with no conversational text — add a default
+                finalText = "Got it! Tell me more about your family."
+            }
             streamingText = ""
             let assistantMsg = persistMessage(role: .assistant, content: finalText)
             messages.append(assistantMsg)
@@ -311,7 +315,7 @@ struct InterviewView: View {
     }
 
     private func extractAllPersonJSON(from text: String) -> [ExtractedPerson] {
-        let pattern = #"```json\s*([\s\S]*?)\s*```"#
+        let pattern = #"```json[^\n]*\n([\s\S]*?)\n\s*```"#
         guard let regex = try? NSRegularExpression(pattern: pattern) else { return [] }
         let nsRange = NSRange(text.startIndex..., in: text)
         return regex.matches(in: text, range: nsRange).compactMap { match -> ExtractedPerson? in
@@ -325,13 +329,13 @@ struct InterviewView: View {
         var cleaned = text
 
         // Remove complete JSON blocks: ```json ... ```
-        if let regex = try? NSRegularExpression(pattern: #"```json[\s\S]*?```"#) {
+        if let regex = try? NSRegularExpression(pattern: #"```json[^\n]*\n[\s\S]*?```"#) {
             let range = NSRange(cleaned.startIndex..., in: cleaned)
             cleaned = regex.stringByReplacingMatches(in: cleaned, range: range, withTemplate: "")
         }
 
         // Remove incomplete/partial JSON blocks (started but no closing fence)
-        if let regex = try? NSRegularExpression(pattern: #"```json[\s\S]*$"#) {
+        if let regex = try? NSRegularExpression(pattern: #"```json[^\n]*[\s\S]*$"#) {
             let range = NSRange(cleaned.startIndex..., in: cleaned)
             cleaned = regex.stringByReplacingMatches(in: cleaned, range: range, withTemplate: "")
         }

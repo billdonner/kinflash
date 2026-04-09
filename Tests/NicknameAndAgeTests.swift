@@ -132,7 +132,7 @@ final class NicknameAndAgeTests: XCTestCase {
     // MARK: - Helpers
 
     private func extractAllPeople(from text: String) -> [ExtractedPerson] {
-        let pattern = #"```json\s*([\s\S]*?)\s*```"#
+        let pattern = #"```json[^\n]*\n([\s\S]*?)\n\s*```"#
         guard let regex = try? NSRegularExpression(pattern: pattern) else { return [] }
         let nsRange = NSRange(text.startIndex..., in: text)
         return regex.matches(in: text, range: nsRange).compactMap { match in
