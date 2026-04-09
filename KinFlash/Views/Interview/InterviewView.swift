@@ -265,6 +265,7 @@ struct InterviewView: View {
                 streamingText = cleanResponse(fullResponse)
             }
             print("[Interview] Stream complete: \(chunkCount) chunks, \(fullResponse.count) chars")
+            print("[Interview] RAW response: \(fullResponse)")
 
             // Streaming complete — persist and finalize
             let finalText = cleanResponse(fullResponse)

@@ -1,13 +1,22 @@
 import Foundation
 import FoundationModels
 
+/// Thread-safe flag for watchdog coordination
+private final class AtomicFlag: @unchecked Sendable {
+    private var _value: Bool
+    init(_ value: Bool) { _value = value }
+    var value: Bool {
+        get { _value }
+        set { _value = newValue }
+    }
+}
+
 /// Apple Intelligence provider using on-device FoundationModels (iOS 26+).
-/// Throws on failure — no silent fallback. The UI handles retry.
 struct AppleIntelligenceProvider: AIProvider {
 
     var isAvailable: Bool {
         #if targetEnvironment(macCatalyst) && DEBUG
-        print("[AI] AppleIntelligence: disabled on Mac Catalyst debug builds (sandbox blocks XPC)")
+        print("[AI] AppleIntelligence: disabled on Mac Catalyst debug builds")
         return false
         #else
         let available = SystemLanguageModel.default.isAvailable
@@ -21,10 +30,11 @@ struct AppleIntelligenceProvider: AIProvider {
             throw AIProviderError.notAvailable
         }
         let (instructions, userPrompt) = buildPrompt(from: messages)
-        print("[AI] AppleIntelligence.chat: sending \(userPrompt.count) chars to LanguageModelSession")
+        print("[AI] AppleIntelligence.chat: sending \(userPrompt.count) chars")
         let session = LanguageModelSession(instructions: instructions)
         let response = try await session.respond(to: userPrompt)
-        print("[AI] AppleIntelligence.chat: got \(response.content.count) char response")
+        print("[AI] AppleIntelligence.chat: got \(response.content.count) chars")
+        print("[AI] AppleIntelligence.chat RAW: \(response.content)")
         return response.content
     }
 
@@ -37,7 +47,10 @@ struct AppleIntelligenceProvider: AIProvider {
         print("[AI] AppleIntelligence.stream: starting with \(userPrompt.count) chars, \(messages.count) messages")
 
         return AsyncThrowingStream { continuation in
-            let workTask = Task {
+            let finished = AtomicFlag(false)
+
+            let workTask = Task { @Sendable in
+                defer { finished.value = true }
                 print("[AI] AppleIntelligence.stream: creating LanguageModelSession...")
                 let session = LanguageModelSession(instructions: instructions)
                 print("[AI] AppleIntelligence.stream: calling streamResponse...")
@@ -62,15 +75,15 @@ struct AppleIntelligenceProvider: AIProvider {
                 continuation.finish()
             }
 
-            // Watchdog: cancel if no response within 15 seconds
-            Task {
+            // Watchdog: cancel only if work hasn't finished
+            Task { @Sendable in
                 try? await Task.sleep(for: .seconds(15))
-                if !workTask.isCancelled {
-                    print("[AI] AppleIntelligence.stream: WATCHDOG FIRED — no response in 15 seconds, cancelling")
+                if !workTask.isCancelled && !finished.value {
+                    print("[AI] AppleIntelligence.stream: WATCHDOG FIRED — no response in 15 seconds")
                     workTask.cancel()
                     continuation.finish(throwing: AIProviderError.networkError(
                         NSError(domain: "AppleIntelligence", code: -1,
-                                userInfo: [NSLocalizedDescriptionKey: "Apple Intelligence did not respond within 15 seconds. The on-device model may not be ready. Please try again."])
+                                userInfo: [NSLocalizedDescriptionKey: "Apple Intelligence did not respond within 15 seconds. Please try again."])
                     ))
                 }
             }

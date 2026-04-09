@@ -11,6 +11,7 @@
 		06029F7A0FED3D83DE29B2C5 /* PeopleListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02590FD6E245E74E291A441D /* PeopleListView.swift */; };
 		12475FE721091D38BCF3D6D0 /* KinFlashApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8FB4E0E6CA772FA94FB362 /* KinFlashApp.swift */; };
 		183D648FA805977F248734B5 /* GEDCOMExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D6F353F0EFBC30EEB1ABBFA /* GEDCOMExporter.swift */; };
+		18A006CC4A3FBFB38904C2E7 /* AIWarmupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B349853C518C0DD7D1014E3 /* AIWarmupView.swift */; };
 		2ABF1D31F968C0C8019DED43 /* LocalInterviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2522081BF43DB027F4E2D6A0 /* LocalInterviewProvider.swift */; };
 		2D1D67DA3C19BB80A2584251 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE7C7AB23CA490084777FB0 /* DatabaseManager.swift */; };
 		2D98A9D08112D5697E5F2077 /* RelationshipResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B99C892513E73FCB5FCD5C /* RelationshipResolverTests.swift */; };
@@ -108,6 +109,7 @@
 		710FB137B549BC5BEC6E4629 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		7607652AEE16D9A09636FC9B /* BidirectionalDeleteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BidirectionalDeleteTests.swift; sourceTree = "<group>"; };
 		7ADCB23D89F8ECDB4C800CB3 /* TreeLayoutEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeLayoutEngine.swift; sourceTree = "<group>"; };
+		7B349853C518C0DD7D1014E3 /* AIWarmupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIWarmupView.swift; sourceTree = "<group>"; };
 		86B46ADAD7434733E31270B6 /* FlashcardSortTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashcardSortTests.swift; sourceTree = "<group>"; };
 		8D6F353F0EFBC30EEB1ABBFA /* GEDCOMExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GEDCOMExporter.swift; sourceTree = "<group>"; };
 		94350573207388045062C5F8 /* DataValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataValidationTests.swift; sourceTree = "<group>"; };
@@ -239,6 +241,7 @@
 		7D4A0AFFDBC8662C45980EB8 /* Interview */ = {
 			isa = PBXGroup;
 			children = (
+				7B349853C518C0DD7D1014E3 /* AIWarmupView.swift */,
 				AF0A4DF735622E729B2DE0EB /* InterviewView.swift */,
 			);
 			path = Interview;
@@ -475,6 +478,7 @@
 			files = (
 				A1057DCE77517D394308D131 /* AIProvider.swift in Sources */,
 				DA7698F5E1C3C9ACB1F10A86 /* AIProviderRouter.swift in Sources */,
+				18A006CC4A3FBFB38904C2E7 /* AIWarmupView.swift in Sources */,
 				E6613CA63B0997EF97135CC0 /* AddRelationshipView.swift in Sources */,
 				7C10547F33FEEA6BC55824D1 /* AnthropicProvider.swift in Sources */,
 				BA40705F5798AFE29CE05177 /* AppSettings.swift in Sources */,
@@ -611,7 +615,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = KinFlash/KinFlash.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CURRENT_PROJECT_VERSION = 28;
+				CURRENT_PROJECT_VERSION = 29;
 				DEVELOPMENT_TEAM = NEAY582ME4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;
@@ -713,7 +717,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = KinFlash/KinFlash.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CURRENT_PROJECT_VERSION = 28;
+				CURRENT_PROJECT_VERSION = 29;
 				DEVELOPMENT_TEAM = NEAY582ME4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;

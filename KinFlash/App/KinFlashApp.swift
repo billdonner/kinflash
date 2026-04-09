@@ -173,7 +173,7 @@ struct MainTabView: View {
         } detail: {
             // Interview panel (always available on iPad)
             if showInterviewPanel {
-                InterviewView(embedded: true)
+                AIWarmupView()
                     .navigationTitle("Interview")
             } else {
                 Text("Tap the chat icon in the sidebar to show the interview panel.")
@@ -201,7 +201,7 @@ struct MainTabView: View {
             }
             Tab("Interview", systemImage: "bubble.left.and.bubble.right", value: 2) {
                 NavigationStack {
-                    InterviewView(embedded: true)
+                    AIWarmupView()
                 }
             }
             Tab("Decks", systemImage: "rectangle.stack", value: 3) {
