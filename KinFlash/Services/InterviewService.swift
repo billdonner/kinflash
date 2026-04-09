@@ -24,6 +24,9 @@ struct InterviewService: Sendable {
     let dbQueue: DatabaseQueue
     let aiProvider: any AIProvider
 
+    /// Exposed for device integration tests
+    var testableSystemPrompt: String { systemPrompt }
+
     private var systemPrompt: String {
         """
         You help build a family tree by asking questions and extracting names the user provides.

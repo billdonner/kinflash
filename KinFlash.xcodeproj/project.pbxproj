@@ -38,6 +38,7 @@
 		A0EC9CCED73288A10BEAEBDC /* GEDCOMParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DFD708B0B90F350814A97EF /* GEDCOMParserTests.swift */; };
 		A1057DCE77517D394308D131 /* AIProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3DBCCDA651391E962E2F10 /* AIProvider.swift */; };
 		A34CFB9264EA987BFF12685D /* GEDCOMParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65267A59B66DC2A246C97B2C /* GEDCOMParser.swift */; };
+		A744B74831671FD8EA9F00D3 /* DeviceOnlyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02F48BF653EEEF59D003DB9E /* DeviceOnlyTests.swift */; };
 		A8058B3173E6B32019429AA8 /* PersonCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6F9B81473DE88E2A516DAB /* PersonCardView.swift */; };
 		A8A315C2FD0A0697D125C5AC /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = D5FDEB0576E00F3FE40918C2 /* GRDB */; };
 		A8DB07B89AF9F8575820B410 /* PDFExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B49270F6891A73066879C9 /* PDFExporter.swift */; };
@@ -79,6 +80,7 @@
 /* Begin PBXFileReference section */
 		02590FD6E245E74E291A441D /* PeopleListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleListView.swift; sourceTree = "<group>"; };
 		02B49270F6891A73066879C9 /* PDFExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFExporter.swift; sourceTree = "<group>"; };
+		02F48BF653EEEF59D003DB9E /* DeviceOnlyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceOnlyTests.swift; sourceTree = "<group>"; };
 		05FDEED002E2BCC6DD1CACB0 /* AttachmentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentManager.swift; sourceTree = "<group>"; };
 		0A8FB4E0E6CA772FA94FB362 /* KinFlashApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KinFlashApp.swift; sourceTree = "<group>"; };
 		0E50F3596AB95C5F310C4638 /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
@@ -223,6 +225,7 @@
 				7607652AEE16D9A09636FC9B /* BidirectionalDeleteTests.swift */,
 				31C826E18226B5F00316C274 /* DatabaseMigrationTests.swift */,
 				94350573207388045062C5F8 /* DataValidationTests.swift */,
+				02F48BF653EEEF59D003DB9E /* DeviceOnlyTests.swift */,
 				4237967C417515049A82B89E /* EdgeCaseTests.swift */,
 				4085A04DED8392B15BB93E91 /* FlashcardGeneratorTests.swift */,
 				86B46ADAD7434733E31270B6 /* FlashcardSortTests.swift */,
@@ -458,6 +461,7 @@
 				8161623634CA71187244C591 /* BidirectionalDeleteTests.swift in Sources */,
 				C059B4E10A180B99285161D3 /* DataValidationTests.swift in Sources */,
 				6C76E5373E3729B3A906019C /* DatabaseMigrationTests.swift in Sources */,
+				A744B74831671FD8EA9F00D3 /* DeviceOnlyTests.swift in Sources */,
 				D91C40EF490DCC75203958AE /* EdgeCaseTests.swift in Sources */,
 				4C15D501FB3B4168F179E0F4 /* FlashcardGeneratorTests.swift in Sources */,
 				D38E1FEFE5958671110C1240 /* FlashcardSortTests.swift in Sources */,
@@ -615,7 +619,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = KinFlash/KinFlash.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_TEAM = NEAY582ME4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;
@@ -717,7 +721,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = KinFlash/KinFlash.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_TEAM = NEAY582ME4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;
