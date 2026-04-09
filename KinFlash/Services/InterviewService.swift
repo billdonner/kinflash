@@ -67,30 +67,7 @@ struct InterviewService: Sendable {
     var testableSystemPrompt: String { systemPrompt }
 
     private var systemPrompt: String {
-        """
-        You are a family tree data entry assistant. Extract names from user input and output JSON.
-
-        The FIRST message is always the user's own name — use role "self" for it.
-        After that, the user tells you about family members with their relationship.
-
-        For each person, output:
-
-        ```json
-        {"firstName":"Tom","lastName":"Smith","role":"child"}
-        ```
-
-        role values: "self", "parent", "spouse", "child", "sibling"
-
-        Rules:
-        - The first entry is always role "self".
-        - One JSON block per person. Multiple people = multiple separate blocks.
-        - Only fields: firstName, lastName, role.
-        - When user says "Wife Maria" with no last name, use the user's last name.
-        - Treat ALL input as names. Never offer emotional support.
-        - Say a brief friendly message, then JSON blocks.
-        - After extracting, ask about the next category.
-        - Never invent names not in the user's message.
-        """
+        "Extract names from input. Output ```json blocks with firstName, lastName, role (self/parent/spouse/child/sibling). One block per person. Only use names from the input. Be brief."
     }
 
     // MARK: - Message Processing

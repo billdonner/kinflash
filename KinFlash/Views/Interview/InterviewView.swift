@@ -367,9 +367,23 @@ struct InterviewView: View {
             "I've extracted the following family members:",
             "I've extracted the following:",
             "Here's the extracted data:",
+            "Here's the first entry:",
+            "Let's start by extracting",
+            "Based on the extracted information,",
         ]
         for phrase in metaPhrases {
             cleaned = cleaned.replacingOccurrences(of: phrase, with: "")
+        }
+
+        // Remove markdown headers and step-by-step reasoning
+        if let regex = try? NSRegularExpression(pattern: #"#{1,4}\s+.+\n?"#) {
+            let range = NSRange(cleaned.startIndex..., in: cleaned)
+            cleaned = regex.stringByReplacingMatches(in: cleaned, range: range, withTemplate: "")
+        }
+        // Remove numbered lists that look like reasoning steps
+        if let regex = try? NSRegularExpression(pattern: #"\d+\.\s+\*\*.+?\*\*:?\s*.+\n?"#) {
+            let range = NSRange(cleaned.startIndex..., in: cleaned)
+            cleaned = regex.stringByReplacingMatches(in: cleaned, range: range, withTemplate: "")
         }
 
         return cleaned.trimmingCharacters(in: .whitespacesAndNewlines)

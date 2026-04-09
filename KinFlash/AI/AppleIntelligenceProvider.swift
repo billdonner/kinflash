@@ -122,17 +122,15 @@ struct AppleIntelligenceProvider: AIProvider {
         let userMessages = trimmed.filter { $0.role == .user }
         let lastUserMsg = userMessages.last?.content ?? "Hello"
 
-        // Summarize prior context for the instructions so the model knows
-        // who the user is and what's been added. Don't use "User:"/"Assistant:"
-        // format — the model echoes those.
-        var contextSummary = ""
-        if userMessages.count > 1 {
-            let priorInputs = userMessages.dropLast().map(\.content)
-            contextSummary = "\n\nPrevious entries from this user: " + priorInputs.joined(separator: "; ") + "."
-            contextSummary += "\nThe first entry was the user's own name. Use their last name for family members when no last name is given."
+        // Add minimal context: just the user's name (from first message)
+        var context = ""
+        if userMessages.count > 1, let firstName = userMessages.first?.content {
+            let nameParts = firstName.trimmingCharacters(in: .whitespaces).components(separatedBy: " ")
+            let lastName = nameParts.count > 1 ? nameParts.last! : ""
+            context = " User is \(firstName). Family name: \(lastName). Only output NEW people from the current message."
         }
 
-        let instructions = systemParts.joined(separator: "\n\n") + contextSummary
+        let instructions = systemParts.joined(separator: " ") + context
         return (instructions, lastUserMsg)
     }
 }
