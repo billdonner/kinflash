@@ -45,6 +45,7 @@
 		C1FA3221C012619233ADDB05 /* TreeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E473798B99F01F01DDAB55D9 /* TreeService.swift */; };
 		CE10529894703931A45751AA /* Flashcard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E2A2AAFAEC25ECEF6B6A19C /* Flashcard.swift */; };
 		CE6A43FCDA676A3247234046 /* DeckListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2D81FF65DD292BE4B09C3C7 /* DeckListView.swift */; };
+		D3788CE422ED4C4821F3CA70 /* AppleIntelligenceInterviewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D45289F7C2F676FECE942466 /* AppleIntelligenceInterviewTests.swift */; };
 		D38E1FEFE5958671110C1240 /* FlashcardSortTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86B46ADAD7434733E31270B6 /* FlashcardSortTests.swift */; };
 		D68162B9AD98CF57A5DCD341 /* AppleIntelligenceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FE8B545B63086341AB7791 /* AppleIntelligenceProvider.swift */; };
 		D81E8BD4533EC8DA0DAE2D24 /* FlashcardGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF30266C67CD89D961A3C318 /* FlashcardGenerator.swift */; };
@@ -110,6 +111,7 @@
 		BC02AB7B23ACEF2758C4E6B1 /* Attachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
 		C76908D5846B64F19BFE64EB /* FlashcardGenerationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashcardGenerationView.swift; sourceTree = "<group>"; };
 		CF5A171EF10D7B565D67F43D /* RelationshipResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelationshipResolver.swift; sourceTree = "<group>"; };
+		D45289F7C2F676FECE942466 /* AppleIntelligenceInterviewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleIntelligenceInterviewTests.swift; sourceTree = "<group>"; };
 		D5A9EB7ACED4117488590E13 /* KinFlashTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = KinFlashTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2FE8B545B63086341AB7791 /* AppleIntelligenceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleIntelligenceProvider.swift; sourceTree = "<group>"; };
 		E473798B99F01F01DDAB55D9 /* TreeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeService.swift; sourceTree = "<group>"; };
@@ -204,6 +206,7 @@
 			isa = PBXGroup;
 			children = (
 				F0CA58A3E5394D238B94BB59 /* AIProviderTests.swift */,
+				D45289F7C2F676FECE942466 /* AppleIntelligenceInterviewTests.swift */,
 				7607652AEE16D9A09636FC9B /* BidirectionalDeleteTests.swift */,
 				31C826E18226B5F00316C274 /* DatabaseMigrationTests.swift */,
 				94350573207388045062C5F8 /* DataValidationTests.swift */,
@@ -416,6 +419,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5198B9622B10EF8799CFAC95 /* AIProviderTests.swift in Sources */,
+				D3788CE422ED4C4821F3CA70 /* AppleIntelligenceInterviewTests.swift in Sources */,
 				8161623634CA71187244C591 /* BidirectionalDeleteTests.swift in Sources */,
 				C059B4E10A180B99285161D3 /* DataValidationTests.swift in Sources */,
 				6C76E5373E3729B3A906019C /* DatabaseMigrationTests.swift in Sources */,
@@ -570,7 +574,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_VALUES = "UILaunchScreen={}; UISupportedInterfaceOrientations=UIInterfaceOrientationPortrait; UISupportedInterfaceOrientations~ipad=UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight;";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -666,7 +670,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_VALUES = "UILaunchScreen={}; UISupportedInterfaceOrientations=UIInterfaceOrientationPortrait; UISupportedInterfaceOrientations~ipad=UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight;";
 				LD_RUNPATH_SEARCH_PATHS = (

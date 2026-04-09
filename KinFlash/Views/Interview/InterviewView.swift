@@ -114,11 +114,12 @@ struct InterviewView: View {
         isLoading = true
         errorMessage = nil
 
-        Task {
+        Task { @MainActor in
             await processWithAI(text)
         }
     }
 
+    @MainActor
     private func processWithAI(_ text: String) async {
         guard let db = appState.databaseManager else {
             addAssistantMessage("AI is not configured. You can add people manually from the People tab.")
@@ -136,7 +137,7 @@ struct InterviewView: View {
         let provider = router.provider(for: settings?.selectedAIProvider, model: settings?.selectedModel)
         let service = InterviewService(dbQueue: db.dbQueue, aiProvider: provider)
 
-        // Use streaming: collect tokens as they arrive
+        // Use streaming: collect tokens as they arrive, all state mutations on MainActor
         var fullResponse = ""
         streamingText = ""
 
@@ -151,25 +152,27 @@ struct InterviewView: View {
                 streamingText = cleanResponse(fullResponse)
             }
 
-            // Streaming complete — finalize the message
+            // Streaming complete — finalize
             let finalText = cleanResponse(fullResponse)
             streamingText = ""
             addAssistantMessage(finalText)
             conversationHistory.append(AIMessage(role: .assistant, content: fullResponse))
 
-            // Extract person data from the full response
-            let extracted = extractPersonJSON(from: fullResponse)
-            if let person = extracted, person.isComplete {
+            // Extract ALL person JSON blocks from the full response (provider may emit multiple)
+            let allExtracted = extractAllPersonJSON(from: fullResponse)
+            for person in allExtracted where person.isComplete {
                 do {
                     let saved = try service.saveExtractedPerson(person)
                     extractedCount += 1
                     if appState.rootPersonId == nil {
                         appState.setRootPerson(saved.id)
                     }
-                    appState.refreshPeople()
                 } catch {
                     errorMessage = "Failed to save: \(error.localizedDescription)"
                 }
+            }
+            if !allExtracted.isEmpty {
+                appState.refreshPeople()
             }
 
             isLoading = false
@@ -183,17 +186,19 @@ struct InterviewView: View {
         }
     }
 
-    /// Extract person JSON — duplicated here so the view can process the full streamed response.
-    private func extractPersonJSON(from text: String) -> ExtractedPerson? {
+    /// Extract ALL person JSON blocks from text (provider may emit multiple per response).
+    private func extractAllPersonJSON(from text: String) -> [ExtractedPerson] {
         let pattern = #"```json\s*([\s\S]*?)\s*```"#
-        guard let regex = try? NSRegularExpression(pattern: pattern),
-              let match = regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
-              let range = Range(match.range(at: 1), in: text) else {
-            return nil
+        guard let regex = try? NSRegularExpression(pattern: pattern) else { return [] }
+        let nsRange = NSRange(text.startIndex..., in: text)
+        let matches = regex.matches(in: text, range: nsRange)
+
+        return matches.compactMap { match -> ExtractedPerson? in
+            guard let range = Range(match.range(at: 1), in: text) else { return nil }
+            let jsonString = String(text[range])
+            guard let data = jsonString.data(using: .utf8) else { return nil }
+            return try? JSONDecoder().decode(ExtractedPerson.self, from: data)
         }
-        let jsonString = String(text[range])
-        guard let data = jsonString.data(using: .utf8) else { return nil }
-        return try? JSONDecoder().decode(ExtractedPerson.self, from: data)
     }
 
     private func addAssistantMessage(_ text: String) {
