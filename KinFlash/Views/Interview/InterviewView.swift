@@ -90,7 +90,7 @@ struct InterviewView: View {
             }
             ToolbarItem(placement: .primaryAction) {
                 Menu {
-                    Button("Clear History", systemImage: "trash", role: .destructive) {
+                    Button("Start Over (clears tree)", systemImage: "trash", role: .destructive) {
                         clearHistory()
                     }
                 } label: {
@@ -168,9 +168,20 @@ struct InterviewView: View {
     private func clearHistory() {
         if let db = appState.databaseManager {
             try? db.dbQueue.write { database in
+                try database.execute(sql: "DELETE FROM flashcard")
+                try database.execute(sql: "DELETE FROM flashcardDeck")
+                try database.execute(sql: "DELETE FROM attachment")
+                try database.execute(sql: "DELETE FROM relationship")
+                try database.execute(sql: "DELETE FROM person")
                 try database.execute(sql: "DELETE FROM interviewMessage")
+                var settings = try AppSettings.current(database)
+                settings.rootPersonId = nil
+                settings.updatedAt = Date()
+                try settings.update(database)
             }
         }
+        appState.rootPersonId = nil
+        appState.refreshPeople()
         messages = []
         conversationHistory = []
         extractedCount = 0
