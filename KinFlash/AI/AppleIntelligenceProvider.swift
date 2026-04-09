@@ -48,6 +48,7 @@ struct AppleIntelligenceProvider: AIProvider {
 
         return AsyncThrowingStream { continuation in
             let finished = AtomicFlag(false)
+            let gotFirstToken = AtomicFlag(false)
 
             let workTask = Task { @Sendable in
                 defer { finished.value = true }
@@ -67,6 +68,7 @@ struct AppleIntelligenceProvider: AIProvider {
                         lastLength = current.count
                         tokenCount += 1
                         if tokenCount == 1 {
+                            gotFirstToken.value = true
                             print("[AI] AppleIntelligence.stream: first token received!")
                         }
                     }
@@ -75,15 +77,16 @@ struct AppleIntelligenceProvider: AIProvider {
                 continuation.finish()
             }
 
-            // Watchdog: cancel only if work hasn't finished
+            // Watchdog: only fires if NO tokens received after 30 seconds.
+            // Once streaming starts, let it finish — don't kill active generation.
             Task { @Sendable in
-                try? await Task.sleep(for: .seconds(15))
-                if !workTask.isCancelled && !finished.value {
-                    print("[AI] AppleIntelligence.stream: WATCHDOG FIRED — no response in 15 seconds")
+                try? await Task.sleep(for: .seconds(30))
+                if !workTask.isCancelled && !finished.value && !gotFirstToken.value {
+                    print("[AI] AppleIntelligence.stream: WATCHDOG FIRED — no first token in 30 seconds")
                     workTask.cancel()
                     continuation.finish(throwing: AIProviderError.networkError(
                         NSError(domain: "AppleIntelligence", code: -1,
-                                userInfo: [NSLocalizedDescriptionKey: "Apple Intelligence did not respond within 15 seconds. Please try again."])
+                                userInfo: [NSLocalizedDescriptionKey: "Apple Intelligence did not respond within 30 seconds. The model may not be ready. Please try again."])
                     ))
                 }
             }
