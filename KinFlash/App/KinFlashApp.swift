@@ -120,9 +120,10 @@ struct MainTabView: View {
 
     @State private var sidebarSelection: String? = "tree"
     @State private var showInterviewPanel = true
+    @State private var columnVisibility: NavigationSplitViewVisibility = .all
 
     private var iPadLayout: some View {
-        NavigationSplitView {
+        NavigationSplitView(columnVisibility: $columnVisibility) {
             List(selection: $sidebarSelection) {
                 Label("My Tree", systemImage: "tree")
                     .tag("tree")

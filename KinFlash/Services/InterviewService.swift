@@ -26,30 +26,23 @@ struct InterviewService: Sendable {
 
     private var systemPrompt: String {
         """
-        You are a family tree interview assistant. Help the user build their family tree.
+        You help build a family tree by asking questions and extracting names the user provides.
 
-        RULES:
-        1. Be warm and conversational. Ask one question at a time.
-        2. For EVERY person the user mentions by name, output a JSON block with their details.
-        3. If the user mentions multiple people, output one JSON block per person.
-        4. Ask about: parents, spouse, children, siblings, grandchildren, then extended family.
-        5. When the user says they're done, say goodbye warmly. Do NOT output any JSON.
-        6. NEVER invent or hallucinate people. Only output JSON for names the user actually provides.
-        7. Do NOT use example names. Only use the actual names from the user's messages.
+        STRICT RULES:
+        - ONLY create JSON for people whose names appear in the user's messages.
+        - NEVER invent, guess, or fabricate any names. If the user has not named someone, do not create them.
+        - Ask about family members one category at a time: first parents, then spouse, then children, then siblings, then others.
+        - Keep questions short and friendly.
 
-        OUTPUT FORMAT - wrap each person in ```json fences. Fields:
-        firstName, middleName, lastName, nickname, birthYear, birthPlace, isLiving, deathYear, gender, relationships, isComplete
+        When the user provides a name, output a JSON block like this (use ```json fences):
+        {"firstName":"...","middleName":null,"lastName":"...","nickname":null,"birthYear":null,"birthPlace":null,"isLiving":true,"deathYear":null,"gender":null,"relationships":[],"isComplete":true}
 
-        The relationships array contains objects with "type" and "personName":
-        - type "parent": this person IS A PARENT OF personName
-        - type "child": this person IS A CHILD OF personName
-        - type "spouse": married to personName
-        - type "sibling": sibling of personName
+        Fill in only what the user actually stated. Use null for anything not mentioned.
+        Relationship types: "parent" (is parent of), "child" (is child of), "spouse", "sibling".
+        Use proper capitalization for names. Put nicknames in the nickname field only.
 
-        Use null for unknown fields. Set isComplete to true. Capitalize names properly.
-        Nicknames go in the nickname field, not firstName.
-
-        If the user mentions multiple people in one sentence, output separate JSON blocks for each.
+        If the user gives age instead of birth year, convert it (current year minus age).
+        If no names are provided in a message, respond conversationally with NO JSON output.
         """
     }
 
@@ -116,12 +109,12 @@ struct InterviewService: Sendable {
             }
             person = existing
         } else {
-            // Create new person
+            // Create new person — normalize capitalization
             let newPerson = Person(
                 id: UUID(),
-                firstName: extracted.firstName,
-                middleName: extracted.middleName,
-                lastName: extracted.lastName,
+                firstName: capitalizeName(extracted.firstName),
+                middleName: extracted.middleName.map(capitalizeName),
+                lastName: extracted.lastName.map(capitalizeName),
                 nickname: extracted.nickname,
                 birthDate: nil,
                 birthYear: extracted.birthYear,
@@ -246,6 +239,19 @@ struct InterviewService: Sendable {
                 return true
             }
         }
+    }
+
+    // MARK: - Name Normalization
+
+    /// Capitalize first letter, lowercase rest. Handles all-caps from AI models.
+    private func capitalizeName(_ name: String) -> String {
+        let trimmed = name.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else { return trimmed }
+        // If it's all uppercase or all lowercase, title-case it
+        if trimmed == trimmed.uppercased() || trimmed == trimmed.lowercased() {
+            return trimmed.prefix(1).uppercased() + trimmed.dropFirst().lowercased()
+        }
+        return trimmed // Already mixed case, leave it
     }
 
     // MARK: - JSON Extraction
