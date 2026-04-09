@@ -1,11 +1,12 @@
 import Foundation
 import GRDB
 
-/// Simple extraction: just name + role. The on-device model can't handle complex schemas.
+/// Extracted person from AI response.
 struct ExtractedPerson: Codable, Sendable {
     let firstName: String
     let lastName: String?
     let role: String?           // "self", "parent", "spouse", "child", "sibling", etc.
+    let relatedTo: String?      // firstName of the person this relates to (cloud models)
 
     // Legacy fields — accepted if present but not required
     let middleName: String?
@@ -28,6 +29,7 @@ struct ExtractedPerson: Codable, Sendable {
         firstName = try c.decode(String.self, forKey: .firstName)
         lastName = try c.decodeIfPresent(String.self, forKey: .lastName)
         role = try c.decodeIfPresent(String.self, forKey: .role)
+        relatedTo = try c.decodeIfPresent(String.self, forKey: .relatedTo)
         middleName = try c.decodeIfPresent(String.self, forKey: .middleName)
         nickname = try c.decodeIfPresent(String.self, forKey: .nickname)
         birthYear = try c.decodeIfPresent(Int.self, forKey: .birthYear)
@@ -46,11 +48,12 @@ struct ExtractedPerson: Codable, Sendable {
          nickname: String? = nil, birthYear: Int? = nil, birthPlace: String? = nil,
          isLiving: Bool? = true, deathYear: Int? = nil, gender: String? = nil,
          relationships: [ExtractedRelationship]? = nil, isComplete: Bool? = true,
-         role: String? = nil) {
+         role: String? = nil, relatedTo: String? = nil) {
         self.firstName = firstName; self.middleName = middleName; self.lastName = lastName
         self.nickname = nickname; self.birthYear = birthYear; self.birthPlace = birthPlace
         self.isLiving = isLiving; self.deathYear = deathYear; self.gender = gender
         self.relationships = relationships; self.isComplete = isComplete; self.role = role
+        self.relatedTo = relatedTo
     }
 }
 
@@ -66,8 +69,41 @@ struct InterviewService: Sendable {
     /// Exposed for device integration tests
     var testableSystemPrompt: String { systemPrompt }
 
+    /// Short prompt for on-device Apple Intelligence (4K token limit)
+    static let compactPrompt = "Extract names from input. Output ```json blocks with firstName, lastName, role (self/parent/spouse/child/sibling). One block per person. Only use names from the input. Be brief."
+
+    /// Rich prompt for cloud providers (Anthropic, OpenAI) with relatedTo field
+    static let cloudPrompt = """
+    You are a family tree assistant. Extract people from user input and output JSON.
+
+    For each person, output a ```json block with these fields:
+    - firstName, lastName: the person's name (capitalize properly)
+    - role: their relationship type (self/parent/spouse/child/sibling/grandchild)
+    - relatedTo: firstName of the person they're related to
+
+    The first entry is always the user themselves (role: self).
+    After that, roles are relative to whoever they reference.
+
+    Example: "Andrew married Katherine, sons George and Teddy"
+    → Andrew role:self, Katherine role:spouse relatedTo:Andrew,
+      George role:child relatedTo:Andrew, Teddy role:child relatedTo:Andrew
+
+    Example: "My wife is Sara, my parents are Bob and Sue"
+    → Sara role:spouse relatedTo:[user], Bob role:parent relatedTo:[user],
+      Sue role:parent relatedTo:[user]
+
+    Rules:
+    - One JSON block per person, no arrays
+    - When no last name given, use the family last name from context
+    - Never invent names. Only extract what the user actually said.
+    - Say a friendly message, then the JSON blocks, then ask what's next.
+    """
+
     private var systemPrompt: String {
-        "Extract names from input. Output ```json blocks with firstName, lastName, role (self/parent/spouse/child/sibling). One block per person. Only use names from the input. Be brief."
+        if aiProvider is AnthropicProvider || aiProvider is OpenAIProvider {
+            return Self.cloudPrompt
+        }
+        return Self.compactPrompt
     }
 
     // MARK: - Message Processing
@@ -163,7 +199,7 @@ struct InterviewService: Sendable {
         // Link relationship based on role (relative to root person)
         let treeService = TreeService(dbQueue: dbQueue)
         if let role = extracted.role?.lowercased(), role != "self" {
-            try linkByRole(person: person, role: role, treeService: treeService)
+            try linkByRole(person: person, role: role, relatedTo: extracted.relatedTo, treeService: treeService)
         }
 
         // Also process legacy relationship array if present
@@ -178,35 +214,36 @@ struct InterviewService: Sendable {
         return person
     }
 
-    /// Link a person to the root person based on their role.
-    private func linkByRole(person: Person, role: String, treeService: TreeService) throws {
-        // Find the root person (the first "self" person, or the first person added)
-        let rootPerson = try dbQueue.read { db -> Person? in
-            // Get the root from settings
-            let settings = try AppSettings.current(db)
-            if let rootId = settings.rootPersonId {
-                return try Person.fetchOne(db, key: rootId)
+    /// Link a person based on their role and relatedTo field.
+    /// If relatedTo is specified, links to that person. Otherwise links to root.
+    private func linkByRole(person: Person, role: String, relatedTo: String? = nil, treeService: TreeService) throws {
+        // Find the target person to link to
+        let target: Person?
+        if let relName = relatedTo, !relName.isEmpty {
+            // Look up the person by firstName (case-insensitive)
+            target = try findExistingPerson(firstName: relName, lastName: nil, birthYear: nil)
+        } else {
+            // Default: link to root person
+            target = try dbQueue.read { db -> Person? in
+                let settings = try AppSettings.current(db)
+                if let rootId = settings.rootPersonId {
+                    return try Person.fetchOne(db, key: rootId)
+                }
+                return try Person.order(Column("createdAt")).fetchOne(db)
             }
-            // Fallback: first person in the database
-            return try Person.order(Column("createdAt")).fetchOne(db)
         }
-        guard let root = rootPerson, root.id != person.id else { return }
+        guard let linkTo = target, linkTo.id != person.id else { return }
 
         do {
             switch role {
             case "parent":
-                // This person is a parent of root
-                try treeService.addRelationship(from: person.id, to: root.id, type: .parent)
-            case "child":
-                // This person is a child of root
-                try treeService.addRelationship(from: root.id, to: person.id, type: .parent)
-            case "spouse":
-                try treeService.addRelationship(from: root.id, to: person.id, type: .spouse)
+                try treeService.addRelationship(from: person.id, to: linkTo.id, type: .parent)
+            case "child", "grandchild":
+                try treeService.addRelationship(from: linkTo.id, to: person.id, type: .parent)
+            case "spouse", "wife", "husband":
+                try treeService.addRelationship(from: linkTo.id, to: person.id, type: .spouse)
             case "sibling":
-                try treeService.addRelationship(from: root.id, to: person.id, type: .sibling)
-            case "grandchild":
-                // Can't directly link grandchild without knowing which child — skip for now
-                break
+                try treeService.addRelationship(from: linkTo.id, to: person.id, type: .sibling)
             default:
                 break
             }

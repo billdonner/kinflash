@@ -269,7 +269,15 @@ struct InterviewView: View {
 
             var finalText = cleanResponse(fullResponse)
             if finalText.isEmpty {
-                finalText = "Got it! Tell me more about your family."
+                // Generate a contextual default message
+                let allExtracted = extractAllPersonJSON(from: fullResponse)
+                let names = allExtracted.map(\.firstName).joined(separator: ", ")
+                let prompts = [
+                    "Added \(names.isEmpty ? "them" : names)! Who else is in the family?",
+                    "\(names.isEmpty ? "Got it" : names + " added")! Tell me about more family members.",
+                    "Added to your tree! Anyone else — parents, siblings, children?",
+                ]
+                finalText = prompts.randomElement()!
             }
             let assistantMsg = persistMessage(role: .assistant, content: finalText)
             messages.append(assistantMsg)
