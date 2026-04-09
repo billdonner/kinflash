@@ -10,9 +10,10 @@ struct AppleIntelligenceProvider: AIProvider {
     private let timeoutSeconds: Double = 120
 
     var isAvailable: Bool {
-        #if targetEnvironment(macCatalyst)
-        // FoundationModels XPC is sandbox-blocked on Mac Catalyst debug builds.
-        // Use local provider until Apple fixes the sandbox entitlement.
+        // The sandbox XPC error only affects Mac Catalyst DEBUG builds
+        // (development signing). App Store / TestFlight builds get proper
+        // entitlements and FoundationModels works fine.
+        #if targetEnvironment(macCatalyst) && DEBUG
         return false
         #else
         return SystemLanguageModel.default.isAvailable
