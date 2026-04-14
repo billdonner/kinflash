@@ -26,7 +26,13 @@ import GRDB
 ///     Lynn Ford + Robert Alvarado (married)
 ///     Paul Ford (unmarried)
 ///
-/// Total: 21 people, 4 generations, 4 marriages in Gen 4 (33%)
+/// Generation 5 (Gen 4 children, increasing count):
+///   Charlotte + Stavros → Athena, Spyros (2)
+///   AnneJr + Giancarlo → Marco, Sophia, Luca (3)
+///   BensonJr + Debbie → Jake, Lily, Owen (3)
+///   Lynn + Robert → Mia, Diego, Rosa, Carlos (4)
+///
+/// Total: 33 people, 5 generations, 4 marriages in Gen 4 (33%)
 ///
 final class FourGenerationTests: XCTestCase {
 
@@ -124,6 +130,64 @@ final class FourGenerationTests: XCTestCase {
         try ts.addRelationship(from: bensonJr.id, to: debbie.id, type: .spouse)
         try ts.addRelationship(from: lynn.id, to: robert.id, type: .spouse)
 
+        // Gen 5: Children from Gen 4 marriages (increasing count per couple)
+        // Charlotte + Stavros → 2 children
+        let athena = try add("Athena", "Niarchos", gender: .female)
+        let spyros = try add("Spyros", "Niarchos", gender: .male)
+        try ts.addRelationship(from: charlotte.id, to: athena.id, type: .parent)
+        try ts.addRelationship(from: stavros.id, to: athena.id, type: .parent)
+        try ts.addRelationship(from: charlotte.id, to: spyros.id, type: .parent)
+        try ts.addRelationship(from: stavros.id, to: spyros.id, type: .parent)
+        try ts.addRelationship(from: athena.id, to: spyros.id, type: .sibling)
+
+        // AnneJr + Giancarlo → 3 children
+        let marco = try add("Marco", "Uzielli", gender: .male)
+        let sophia = try add("Sophia", "Uzielli", gender: .female)
+        let luca = try add("Luca", "Uzielli", gender: .male)
+        try ts.addRelationship(from: anneFord.id, to: marco.id, type: .parent)
+        try ts.addRelationship(from: giancarlo.id, to: marco.id, type: .parent)
+        try ts.addRelationship(from: anneFord.id, to: sophia.id, type: .parent)
+        try ts.addRelationship(from: giancarlo.id, to: sophia.id, type: .parent)
+        try ts.addRelationship(from: anneFord.id, to: luca.id, type: .parent)
+        try ts.addRelationship(from: giancarlo.id, to: luca.id, type: .parent)
+        try ts.addRelationship(from: marco.id, to: sophia.id, type: .sibling)
+        try ts.addRelationship(from: marco.id, to: luca.id, type: .sibling)
+        try ts.addRelationship(from: sophia.id, to: luca.id, type: .sibling)
+
+        // BensonJr + Debbie → 3 children
+        let jake = try add("Jake", "Ford", gender: .male)
+        let lily = try add("Lily", "Ford", gender: .female)
+        let owen = try add("Owen", "Ford", gender: .male)
+        try ts.addRelationship(from: bensonJr.id, to: jake.id, type: .parent)
+        try ts.addRelationship(from: debbie.id, to: jake.id, type: .parent)
+        try ts.addRelationship(from: bensonJr.id, to: lily.id, type: .parent)
+        try ts.addRelationship(from: debbie.id, to: lily.id, type: .parent)
+        try ts.addRelationship(from: bensonJr.id, to: owen.id, type: .parent)
+        try ts.addRelationship(from: debbie.id, to: owen.id, type: .parent)
+        try ts.addRelationship(from: jake.id, to: lily.id, type: .sibling)
+        try ts.addRelationship(from: jake.id, to: owen.id, type: .sibling)
+        try ts.addRelationship(from: lily.id, to: owen.id, type: .sibling)
+
+        // Lynn + Robert → 4 children
+        let mia = try add("Mia", "Alvarado", gender: .female)
+        let diego = try add("Diego", "Alvarado", gender: .male)
+        let rosa = try add("Rosa", "Alvarado", gender: .female)
+        let carlos = try add("Carlos", "Alvarado", gender: .male)
+        try ts.addRelationship(from: lynn.id, to: mia.id, type: .parent)
+        try ts.addRelationship(from: robert.id, to: mia.id, type: .parent)
+        try ts.addRelationship(from: lynn.id, to: diego.id, type: .parent)
+        try ts.addRelationship(from: robert.id, to: diego.id, type: .parent)
+        try ts.addRelationship(from: lynn.id, to: rosa.id, type: .parent)
+        try ts.addRelationship(from: robert.id, to: rosa.id, type: .parent)
+        try ts.addRelationship(from: lynn.id, to: carlos.id, type: .parent)
+        try ts.addRelationship(from: robert.id, to: carlos.id, type: .parent)
+        try ts.addRelationship(from: mia.id, to: diego.id, type: .sibling)
+        try ts.addRelationship(from: mia.id, to: rosa.id, type: .sibling)
+        try ts.addRelationship(from: mia.id, to: carlos.id, type: .sibling)
+        try ts.addRelationship(from: diego.id, to: rosa.id, type: .sibling)
+        try ts.addRelationship(from: diego.id, to: carlos.id, type: .sibling)
+        try ts.addRelationship(from: rosa.id, to: carlos.id, type: .sibling)
+
         return (db, ts, people)
     }
 
@@ -132,7 +196,7 @@ final class FourGenerationTests: XCTestCase {
     func testTotalPeopleIs24() throws {
         let (db, _, _) = try buildFamily()
         let count = try db.dbQueue.read { try Person.fetchCount($0) }
-        XCTAssertEqual(count, 21)
+        XCTAssertEqual(count, 33)
     }
 
     func testGen4Has12People() throws {
@@ -270,7 +334,7 @@ final class FourGenerationTests: XCTestCase {
         let engine = TreeLayoutEngine(dbQueue: db.dbQueue)
         let layout = try engine.computeLayout(rootPersonId: henry.id)
 
-        XCTAssertEqual(layout.nodes.count, 21)
+        XCTAssertEqual(layout.nodes.count, 33)
     }
 
     func testLayoutSpans4Generations() throws {
@@ -306,6 +370,93 @@ final class FourGenerationTests: XCTestCase {
         }
     }
 
+    // MARK: - Gen 5 Tests
+
+    func testGen5ChildCounts() throws {
+        let (db, _, people) = try buildFamily()
+        let resolver = RelationshipResolver(dbQueue: db.dbQueue)
+
+        // Charlotte+Stavros → 2 children
+        let charlotte = people["Charlotte"]!
+        let cLabels = try resolver.resolveAll(from: charlotte.id)
+        let cChildren = cLabels.filter { $0.value.label == "Son" || $0.value.label == "Daughter" }
+        XCTAssertEqual(cChildren.count, 2, "Charlotte should have 2 children")
+
+        // BensonJr+Debbie → 3 children
+        let bensonJr = people["BensonJr"]!
+        let bLabels = try resolver.resolveAll(from: bensonJr.id)
+        let bChildren = bLabels.filter { $0.value.label == "Son" || $0.value.label == "Daughter" }
+        XCTAssertEqual(bChildren.count, 3, "BensonJr should have 3 children")
+
+        // Lynn+Robert → 4 children
+        let lynn = people["Lynn"]!
+        let lLabels = try resolver.resolveAll(from: lynn.id)
+        let lChildren = lLabels.filter { $0.value.label == "Son" || $0.value.label == "Daughter" }
+        XCTAssertEqual(lChildren.count, 4, "Lynn should have 4 children")
+    }
+
+    func testGen5GrandparentIsGen3() throws {
+        let (db, _, people) = try buildFamily()
+        let resolver = RelationshipResolver(dbQueue: db.dbQueue)
+        let athena = people["Athena"]!
+        let henryII = people["HenryII"]!
+
+        let label = try resolver.resolve(from: athena.id, to: henryII.id)
+        XCTAssertEqual(label?.label, "Grandfather",
+                       "HenryII should be Athena's grandfather. Got: \(label?.label ?? "nil")")
+    }
+
+    func testGen5GreatGrandparentIsGen2() throws {
+        let (db, _, people) = try buildFamily()
+        let resolver = RelationshipResolver(dbQueue: db.dbQueue)
+        let jake = people["Jake"]!
+        let edsel = people["Edsel"]!
+
+        let label = try resolver.resolve(from: jake.id, to: edsel.id)
+        XCTAssertEqual(label?.label, "Great-Grandfather",
+                       "Edsel should be Jake's great-grandfather. Got: \(label?.label ?? "nil")")
+    }
+
+    func testGen5SecondCousins() throws {
+        let (db, _, people) = try buildFamily()
+        let resolver = RelationshipResolver(dbQueue: db.dbQueue)
+        // Athena (Charlotte's daughter) and Jake (BensonJr's son) are second cousins
+        let athena = people["Athena"]!
+        let jake = people["Jake"]!
+
+        let label = try resolver.resolve(from: athena.id, to: jake.id)
+        print("[5Gen] Athena to Jake: \(label?.label ?? "nil") via \(label?.chainDescription ?? "?")")
+        // Second cousins require 5 hops: parent→parent→sibling→child→child
+        // Our resolver caps at 4 hops, so this returns nil (documented limitation)
+        if label == nil {
+            print("[5Gen] Second cousins (Athena↔Jake) exceed 4-hop resolver limit — expected")
+        } else {
+            print("[5Gen] Second cousins resolved: \(label!.label)")
+        }
+        // Don't hard-assert — this documents the limitation
+    }
+
+    func testLayoutSpans5Generations() throws {
+        let (db, _, people) = try buildFamily()
+        let mia = people["Mia"]!
+        let engine = TreeLayoutEngine(dbQueue: db.dbQueue)
+        let layout = try engine.computeLayout(rootPersonId: mia.id)
+
+        let generations = Set(layout.nodes.map(\.generation))
+        print("[5Gen] Generations from Mia: \(generations.sorted())")
+        XCTAssertGreaterThanOrEqual(generations.count, 5, "Should span 5 generation levels from Mia's perspective")
+    }
+
+    func testGen5TreeSummaryFitsOnDevice() throws {
+        let (db, _, _) = try buildFamily()
+        let service = InterviewService(dbQueue: db.dbQueue, aiProvider: LocalInterviewProvider())
+        let summary = service.testableTreeSummary(compact: true)
+
+        print("[5Gen] 33-person compact summary (\(summary.count) chars)")
+        XCTAssertLessThan(summary.count, 2500, "33-person compact summary should fit on-device")
+        XCTAssertFalse(summary.contains("... and"), "33 people should not be truncated (cap is 50)")
+    }
+
     // MARK: - Flashcards
 
     func testFlashcardsFromCharlotte() throws {
@@ -333,7 +484,7 @@ final class FourGenerationTests: XCTestCase {
         let summary = service.testableTreeSummary(compact: true)
 
         print("[4Gen] Compact summary (\(summary.count) chars):\n\(summary)")
-        XCTAssertLessThan(summary.count, 1500, "24-person compact summary should be under 1500 chars")
+        XCTAssertLessThan(summary.count, 2500, "33-person compact summary should be under 2500 chars")
         XCTAssertFalse(summary.contains("... and"), "24 people should not be truncated (cap is 50)")
     }
 
@@ -360,6 +511,6 @@ final class FourGenerationTests: XCTestCase {
         try parser.importToDatabase(result, dbQueue: db2.dbQueue)
 
         let reimported = try db2.dbQueue.read { try Person.fetchCount($0) }
-        XCTAssertEqual(reimported, 21, "Round-trip should preserve all 21 people")
+        XCTAssertEqual(reimported, 33, "Round-trip should preserve all 33 people")
     }
 }
