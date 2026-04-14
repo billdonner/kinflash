@@ -118,6 +118,10 @@ struct SettingsView: View {
                 showGEDCOMImport = true
             }
 
+            Button("Load Sample Family (25 people)") {
+                loadSampleFamily()
+            }
+
             if let status = statusMessage {
                 Text(status)
                     .font(.caption)
@@ -230,6 +234,32 @@ struct SettingsView: View {
             rootVC.present(activityVC, animated: true)
 
             statusMessage = "Exported \(appState.people.count) people"
+        } catch {
+            appState.errorMessage = error.localizedDescription
+        }
+    }
+
+    private func loadSampleFamily() {
+        guard let db = appState.databaseManager else { return }
+        guard let url = Bundle.main.url(forResource: "SampleFamily", withExtension: "ged") else {
+            appState.errorMessage = "Sample family file not found in bundle"
+            return
+        }
+        do {
+            let content = try String(contentsOf: url)
+            let parser = GEDCOMParser()
+            let result = parser.parse(content: content)
+            try parser.importToDatabase(result, dbQueue: db.dbQueue)
+
+            // Set John Smith as root person (central figure)
+            if let john = result.people.first(where: { $0.firstName == "John" && $0.lastName == "Smith" }) {
+                appState.setRootPerson(john.id)
+            } else if let first = result.people.first {
+                appState.setRootPerson(first.id)
+            }
+
+            appState.refreshPeople()
+            statusMessage = "Loaded \(result.people.count) people, \(result.relationships.count) relationships"
         } catch {
             appState.errorMessage = error.localizedDescription
         }

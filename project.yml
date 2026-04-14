@@ -21,7 +21,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.billdonner.kinflash
         MARKETING_VERSION: "1.0.0"
-        CURRENT_PROJECT_VERSION: "45"
+        CURRENT_PROJECT_VERSION: "46"
         SWIFT_VERSION: "6.0"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         INFOPLIST_KEY_UILaunchScreen_Generation: true
@@ -46,6 +46,9 @@ targets:
     platform: iOS
     sources:
       - Tests
+    resources:
+      - path: KinFlash/Resources
+        buildPhase: resources
     settings:
       base:
         SWIFT_VERSION: "6.0"
