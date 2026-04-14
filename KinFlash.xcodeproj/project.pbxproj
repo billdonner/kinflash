@@ -21,6 +21,7 @@
 		4C15D501FB3B4168F179E0F4 /* FlashcardGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4085A04DED8392B15BB93E91 /* FlashcardGeneratorTests.swift */; };
 		5198B9622B10EF8799CFAC95 /* AIProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CA58A3E5394D238B94BB59 /* AIProviderTests.swift */; };
 		58961E5EF76895C1D7B1E055 /* GEDCOMExporterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BFD098F9AAD95C803A8EFF /* GEDCOMExporterTests.swift */; };
+		676B518D511A6DBD6E7540A1 /* TreeContextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7EDF8FCFB080EFD28C8C8B /* TreeContextTests.swift */; };
 		68EE1E3479ABE37CDB6E5363 /* InterviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0A4DF735622E729B2DE0EB /* InterviewView.swift */; };
 		6C76E5373E3729B3A906019C /* DatabaseMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C826E18226B5F00316C274 /* DatabaseMigrationTests.swift */; };
 		709360039C3F6FA125A60833 /* OnboardingFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58ED9F2AC880066F14B68616 /* OnboardingFlow.swift */; };
@@ -122,6 +123,7 @@
 		94350573207388045062C5F8 /* DataValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataValidationTests.swift; sourceTree = "<group>"; };
 		9662FF03FCD728543F2AE03E /* SampleFamily.ged */ = {isa = PBXFileReference; path = SampleFamily.ged; sourceTree = "<group>"; };
 		9932873C357A7322B0B473D1 /* KinFlash.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = KinFlash.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B7EDF8FCFB080EFD28C8C8B /* TreeContextTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeContextTests.swift; sourceTree = "<group>"; };
 		9D1FFD8157665A5085A9D4EF /* InterviewServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewServiceTests.swift; sourceTree = "<group>"; };
 		A81CF282C435186540D3C2C1 /* OpenAIProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIProvider.swift; sourceTree = "<group>"; };
 		AF0A4DF735622E729B2DE0EB /* InterviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewView.swift; sourceTree = "<group>"; };
@@ -243,6 +245,7 @@
 				E7377B08700925FC3A4185BC /* NicknameAndAgeTests.swift */,
 				11B99C892513E73FCB5FCD5C /* RelationshipResolverTests.swift */,
 				4864554682CC5B09BAD6D7EF /* SyntheticFamilyTests.swift */,
+				9B7EDF8FCFB080EFD28C8C8B /* TreeContextTests.swift */,
 				6ADE8CEE31B530388D4F16C2 /* TreeLayoutDisconnectedTests.swift */,
 				44E8ECB5B5FFA4A4D0AD328A /* TreeLayoutEngineTests.swift */,
 			);
@@ -494,6 +497,7 @@
 				DD0ED1D40AC57ADF4D1E3EA2 /* NicknameAndAgeTests.swift in Sources */,
 				2D98A9D08112D5697E5F2077 /* RelationshipResolverTests.swift in Sources */,
 				40C32A4F66F5DDEC7A8FE405 /* SyntheticFamilyTests.swift in Sources */,
+				676B518D511A6DBD6E7540A1 /* TreeContextTests.swift in Sources */,
 				9D60CB09A40B33977A66A98D /* TreeLayoutDisconnectedTests.swift in Sources */,
 				9A76CD613C95B8596AE1ABB4 /* TreeLayoutEngineTests.swift in Sources */,
 			);
@@ -644,7 +648,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = KinFlash/KinFlash.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CURRENT_PROJECT_VERSION = 49;
+				CURRENT_PROJECT_VERSION = 50;
 				DEVELOPMENT_TEAM = NEAY582ME4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;
@@ -748,7 +752,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = KinFlash/KinFlash.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CURRENT_PROJECT_VERSION = 49;
+				CURRENT_PROJECT_VERSION = 50;
 				DEVELOPMENT_TEAM = NEAY582ME4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;

@@ -66,8 +66,9 @@ struct InterviewService: Sendable {
     let dbQueue: DatabaseQueue
     let aiProvider: any AIProvider
 
-    /// Exposed for device integration tests
+    /// Exposed for testing
     var testableSystemPrompt: String { systemPrompt }
+    func testableTreeSummary(compact: Bool) -> String { buildTreeSummary(compact: compact) }
 
     private static let baseCompactPrompt = "Extract names from input. Output ```json blocks with firstName, lastName, role, relatedTo. role: self/parent/spouse/child/sibling. relatedTo: firstName of who they relate to. One block per person. Only names from input. Be brief."
 
