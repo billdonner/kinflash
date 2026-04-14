@@ -49,6 +49,7 @@
 		A8DB07B89AF9F8575820B410 /* PDFExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B49270F6891A73066879C9 /* PDFExporter.swift */; };
 		ABFA39207B4C43057082928E /* FlashcardGenerationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C76908D5846B64F19BFE64EB /* FlashcardGenerationView.swift */; };
 		ACFC99E8514DD230C9CCFECC /* PersonProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2090C56F34E35875DDAAF9F6 /* PersonProfileView.swift */; };
+		AFA7847805030812731D1983 /* ExportVerificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A8296E4A4E80BB367082509 /* ExportVerificationTests.swift */; };
 		BA40705F5798AFE29CE05177 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0B53CBEC72F5D0AEB8987 /* AppSettings.swift */; };
 		C059B4E10A180B99285161D3 /* DataValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94350573207388045062C5F8 /* DataValidationTests.swift */; };
 		C1FA3221C012619233ADDB05 /* TreeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E473798B99F01F01DDAB55D9 /* TreeService.swift */; };
@@ -126,6 +127,7 @@
 		94350573207388045062C5F8 /* DataValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataValidationTests.swift; sourceTree = "<group>"; };
 		9662FF03FCD728543F2AE03E /* SampleFamily.ged */ = {isa = PBXFileReference; path = SampleFamily.ged; sourceTree = "<group>"; };
 		9932873C357A7322B0B473D1 /* KinFlash.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = KinFlash.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A8296E4A4E80BB367082509 /* ExportVerificationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportVerificationTests.swift; sourceTree = "<group>"; };
 		9B7EDF8FCFB080EFD28C8C8B /* TreeContextTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeContextTests.swift; sourceTree = "<group>"; };
 		9D1FFD8157665A5085A9D4EF /* InterviewServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewServiceTests.swift; sourceTree = "<group>"; };
 		A81CF282C435186540D3C2C1 /* OpenAIProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIProvider.swift; sourceTree = "<group>"; };
@@ -240,6 +242,7 @@
 				94350573207388045062C5F8 /* DataValidationTests.swift */,
 				02F48BF653EEEF59D003DB9E /* DeviceOnlyTests.swift */,
 				4237967C417515049A82B89E /* EdgeCaseTests.swift */,
+				9A8296E4A4E80BB367082509 /* ExportVerificationTests.swift */,
 				4085A04DED8392B15BB93E91 /* FlashcardGeneratorTests.swift */,
 				86B46ADAD7434733E31270B6 /* FlashcardSortTests.swift */,
 				B1130490369521D2AF56DF52 /* FourGenerationTests.swift */,
@@ -494,6 +497,7 @@
 				6C76E5373E3729B3A906019C /* DatabaseMigrationTests.swift in Sources */,
 				A744B74831671FD8EA9F00D3 /* DeviceOnlyTests.swift in Sources */,
 				D91C40EF490DCC75203958AE /* EdgeCaseTests.swift in Sources */,
+				AFA7847805030812731D1983 /* ExportVerificationTests.swift in Sources */,
 				4C15D501FB3B4168F179E0F4 /* FlashcardGeneratorTests.swift in Sources */,
 				D38E1FEFE5958671110C1240 /* FlashcardSortTests.swift in Sources */,
 				71024732AF2108C9C15C41AE /* FourGenerationTests.swift in Sources */,
@@ -656,7 +660,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = KinFlash/KinFlash.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CURRENT_PROJECT_VERSION = 53;
+				CURRENT_PROJECT_VERSION = 54;
 				DEVELOPMENT_TEAM = NEAY582ME4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;
@@ -760,7 +764,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = KinFlash/KinFlash.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CURRENT_PROJECT_VERSION = 53;
+				CURRENT_PROJECT_VERSION = 54;
 				DEVELOPMENT_TEAM = NEAY582ME4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;
