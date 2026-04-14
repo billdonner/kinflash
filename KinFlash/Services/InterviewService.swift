@@ -146,8 +146,8 @@ struct InterviewService: Sendable {
             }
         }
 
-        // For on-device, limit to ~30 people to stay under token budget
-        let maxLines = compact ? 30 : 100
+        // On-device: ~50 people fits in 4K tokens. Cloud: practically unlimited.
+        let maxLines = compact ? 50 : 500
         if lines.count > maxLines {
             return lines.prefix(maxLines).joined(separator: "\n") + "\n... and \(lines.count - maxLines) more"
         }

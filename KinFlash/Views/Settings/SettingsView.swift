@@ -62,6 +62,23 @@ struct SettingsView: View {
                 saveProvider(newValue)
             }
 
+            switch selectedProvider {
+            case "apple":
+                Text("On-device, free, no API key needed. Best for families up to ~50 people.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            case "anthropic":
+                Text("Cloud AI. Handles large families (500+ people), complex relationships, and natural conversation. Requires API key from console.anthropic.com.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            case "openai":
+                Text("Cloud AI. Handles large families (500+ people), complex relationships, and natural conversation. Requires API key from platform.openai.com.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            default:
+                EmptyView()
+            }
+
             // Anthropic key — always visible so you can enter it anytime
             SecureField("Anthropic API Key", text: $anthropicKey)
                 .onSubmit { saveAPIKey("anthropic_api_key", value: anthropicKey) }
