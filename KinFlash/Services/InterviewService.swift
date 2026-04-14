@@ -69,41 +69,90 @@ struct InterviewService: Sendable {
     /// Exposed for device integration tests
     var testableSystemPrompt: String { systemPrompt }
 
-    /// Short prompt for on-device Apple Intelligence (4K token limit)
-    static let compactPrompt = "Extract names from input. Output ```json blocks with firstName, lastName, role (self/parent/spouse/child/sibling). One block per person. Only use names from the input. Be brief."
+    private static let baseCompactPrompt = "Extract names from input. Output ```json blocks with firstName, lastName, role, relatedTo. role: self/parent/spouse/child/sibling. relatedTo: firstName of who they relate to. One block per person. Only names from input. Be brief."
 
-    /// Rich prompt for cloud providers (Anthropic, OpenAI) with relatedTo field
-    static let cloudPrompt = """
+    private static let baseCloudPrompt = """
     You are a family tree assistant. Extract people from user input and output JSON.
 
-    For each person, output a ```json block with these fields:
-    - firstName, lastName: the person's name (capitalize properly)
-    - role: their relationship type (self/parent/spouse/child/sibling/grandchild)
-    - relatedTo: firstName of the person they're related to
-
-    The first entry is always the user themselves (role: self).
-    After that, roles are relative to whoever they reference.
-
-    Example: "Andrew married Katherine, sons George and Teddy"
-    → Andrew role:self, Katherine role:spouse relatedTo:Andrew,
-      George role:child relatedTo:Andrew, Teddy role:child relatedTo:Andrew
-
-    Example: "My wife is Sara, my parents are Bob and Sue"
-    → Sara role:spouse relatedTo:[user], Bob role:parent relatedTo:[user],
-      Sue role:parent relatedTo:[user]
+    For each NEW person, output a ```json block with: firstName, lastName, role, relatedTo.
+    - role: self/parent/spouse/child/sibling/grandchild
+    - relatedTo: firstName of the existing person they connect to
 
     Rules:
-    - One JSON block per person, no arrays
-    - When no last name given, use the family last name from context
+    - One JSON block per NEW person only. Do NOT re-output existing people.
+    - When no last name given, infer from the family context.
     - Never invent names. Only extract what the user actually said.
-    - Say a friendly message, then the JSON blocks, then ask what's next.
+    - Say a friendly message, then JSON blocks, then ask what's next.
     """
 
+    /// Build the system prompt with the current tree state included.
     private var systemPrompt: String {
-        if aiProvider is AnthropicProvider || aiProvider is OpenAIProvider {
-            return Self.cloudPrompt
+        let isCloud = aiProvider is AnthropicProvider || aiProvider is OpenAIProvider
+        let base = isCloud ? Self.baseCloudPrompt : Self.baseCompactPrompt
+        let treeSummary = buildTreeSummary(compact: !isCloud)
+        if treeSummary.isEmpty {
+            return base
         }
-        return Self.compactPrompt
+        return base + "\n\nCurrent family tree:\n" + treeSummary
+    }
+
+    /// Serialize the current tree as a compact text summary for the AI.
+    /// On-device: ultra-compact (name + relationship only, ~15 chars/person).
+    /// Cloud: includes last names and relationship details.
+    private func buildTreeSummary(compact: Bool) -> String {
+        let people: [Person]
+        let relationships: [Relationship]
+        do {
+            people = try dbQueue.read { db in try Person.fetchAll(db) }
+            relationships = try dbQueue.read { db in try Relationship.fetchAll(db) }
+        } catch {
+            return ""
+        }
+
+        guard !people.isEmpty else { return "" }
+
+        let personMap = Dictionary(uniqueKeysWithValues: people.map { ($0.id, $0) })
+
+        // Build adjacency: who is parent/spouse/sibling of whom
+        var lines: [String] = []
+
+        for person in people {
+            let parentRels = relationships.filter { $0.type == .parent && $0.fromPersonId == person.id }
+            let children = parentRels.compactMap { personMap[$0.toPersonId]?.firstName }
+
+            let spouseRels = relationships.filter { $0.type == .spouse && $0.fromPersonId == person.id }
+            let spouses = spouseRels.compactMap { personMap[$0.toPersonId]?.firstName }
+
+            if compact {
+                // Ultra-compact: "John Smith: spouse=Mary, children=Michael,Sarah"
+                var parts: [String] = []
+                if !spouses.isEmpty { parts.append("sp=\(spouses.joined(separator: ","))") }
+                if !children.isEmpty { parts.append("ch=\(children.joined(separator: ","))") }
+                if !parts.isEmpty {
+                    lines.append("\(person.firstName): \(parts.joined(separator: " "))")
+                } else {
+                    lines.append(person.firstName)
+                }
+            } else {
+                // Cloud: more readable
+                var parts: [String] = []
+                if !spouses.isEmpty { parts.append("spouse: \(spouses.joined(separator: ", "))") }
+                if !children.isEmpty { parts.append("children: \(children.joined(separator: ", "))") }
+                if !parts.isEmpty {
+                    lines.append("- \(person.displayName): \(parts.joined(separator: "; "))")
+                } else {
+                    lines.append("- \(person.displayName)")
+                }
+            }
+        }
+
+        // For on-device, limit to ~30 people to stay under token budget
+        let maxLines = compact ? 30 : 100
+        if lines.count > maxLines {
+            return lines.prefix(maxLines).joined(separator: "\n") + "\n... and \(lines.count - maxLines) more"
+        }
+
+        return lines.joined(separator: "\n")
     }
 
     // MARK: - Message Processing
