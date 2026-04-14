@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0574E4BF0F8B45B58B40284D /* TreeLayoutEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ADCB23D89F8ECDB4C800CB3 /* TreeLayoutEngine.swift */; };
 		06029F7A0FED3D83DE29B2C5 /* PeopleListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02590FD6E245E74E291A441D /* PeopleListView.swift */; };
+		088AB10F65138FF4C6100F6C /* InterviewDialogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DC5B5B31994F2DE77F7680 /* InterviewDialogTests.swift */; };
 		10DB191739F54768B505AC61 /* CloudProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BC2642C8BECA8F3EABA3B25 /* CloudProviderTests.swift */; };
 		12475FE721091D38BCF3D6D0 /* KinFlashApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8FB4E0E6CA772FA94FB362 /* KinFlashApp.swift */; };
 		183D648FA805977F248734B5 /* GEDCOMExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D6F353F0EFBC30EEB1ABBFA /* GEDCOMExporter.swift */; };
@@ -101,6 +102,7 @@
 		2E2A2AAFAEC25ECEF6B6A19C /* Flashcard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Flashcard.swift; sourceTree = "<group>"; };
 		2F8F9A085200E9364BA89F12 /* InterviewMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewMessage.swift; sourceTree = "<group>"; };
 		31C826E18226B5F00316C274 /* DatabaseMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseMigrationTests.swift; sourceTree = "<group>"; };
+		34DC5B5B31994F2DE77F7680 /* InterviewDialogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewDialogTests.swift; sourceTree = "<group>"; };
 		3BC2642C8BECA8F3EABA3B25 /* CloudProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudProviderTests.swift; sourceTree = "<group>"; };
 		3D4FBD6CD6EA8B20520D0009 /* JSONExtractionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONExtractionTests.swift; sourceTree = "<group>"; };
 		4085A04DED8392B15BB93E91 /* FlashcardGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashcardGeneratorTests.swift; sourceTree = "<group>"; };
@@ -249,6 +251,7 @@
 				1DDFB892A63C8A590DB5DF07 /* GEDCOMExporterEdgeCaseTests.swift */,
 				55BFD098F9AAD95C803A8EFF /* GEDCOMExporterTests.swift */,
 				6DFD708B0B90F350814A97EF /* GEDCOMParserTests.swift */,
+				34DC5B5B31994F2DE77F7680 /* InterviewDialogTests.swift */,
 				9D1FFD8157665A5085A9D4EF /* InterviewServiceTests.swift */,
 				3D4FBD6CD6EA8B20520D0009 /* JSONExtractionTests.swift */,
 				E7377B08700925FC3A4185BC /* NicknameAndAgeTests.swift */,
@@ -504,6 +507,7 @@
 				814FE87B0D19DA166965C243 /* GEDCOMExporterEdgeCaseTests.swift in Sources */,
 				58961E5EF76895C1D7B1E055 /* GEDCOMExporterTests.swift in Sources */,
 				A0EC9CCED73288A10BEAEBDC /* GEDCOMParserTests.swift in Sources */,
+				088AB10F65138FF4C6100F6C /* InterviewDialogTests.swift in Sources */,
 				F5907EE0FF3C58DF90F74FC8 /* InterviewServiceTests.swift in Sources */,
 				A7E3C343C0C99C6CF32324BA /* JSONExtractionTests.swift in Sources */,
 				DD0ED1D40AC57ADF4D1E3EA2 /* NicknameAndAgeTests.swift in Sources */,
@@ -660,7 +664,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = KinFlash/KinFlash.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CURRENT_PROJECT_VERSION = 54;
+				CURRENT_PROJECT_VERSION = 55;
 				DEVELOPMENT_TEAM = NEAY582ME4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;
@@ -764,7 +768,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = KinFlash/KinFlash.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CURRENT_PROJECT_VERSION = 54;
+				CURRENT_PROJECT_VERSION = 55;
 				DEVELOPMENT_TEAM = NEAY582ME4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;
