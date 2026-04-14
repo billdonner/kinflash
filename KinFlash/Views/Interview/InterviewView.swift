@@ -308,7 +308,12 @@ struct InterviewView: View {
                 }
             }
 
-            for person in otherPeople {
+            for var person in otherPeople {
+                // If relatedTo is missing, try to infer it from the user's message
+                // by finding existing people mentioned in the text
+                if person.relatedTo == nil || person.relatedTo?.isEmpty == true {
+                    person = inferRelatedTo(person: person, fromText: text)
+                }
                 print("[Interview] Saving: \(person.firstName) \(person.lastName ?? "") role:\(person.role ?? "nil") relatedTo:\(person.relatedTo ?? "root")")
                 do {
                     let saved = try service.saveExtractedPerson(person)
@@ -365,6 +370,46 @@ struct InterviewView: View {
             }
         }
         return results
+    }
+
+    /// Infer the relatedTo field when the model doesn't provide it.
+    /// Scans the user's message for existing people's names and picks the best match.
+    /// E.g., "Ryan Wilson has married Julie Katz" → Julie's relatedTo = "Ryan"
+    private func inferRelatedTo(person: ExtractedPerson, fromText text: String) -> ExtractedPerson {
+        let textLower = text.lowercased()
+
+        // Find existing people whose names appear in the user's text
+        // but are NOT the person being saved
+        let candidates = appState.people.filter { existing in
+            let firstName = existing.firstName.lowercased()
+            let fullName = existing.displayName.lowercased()
+            let isMatch = textLower.contains(fullName) || textLower.contains(firstName)
+            let isNotSelf = existing.firstName.lowercased() != person.firstName.lowercased()
+            return isMatch && isNotSelf
+        }
+
+        // Prefer full name match over first-name-only
+        let bestMatch = candidates.sorted { a, b in
+            let aFull = textLower.contains(a.displayName.lowercased())
+            let bFull = textLower.contains(b.displayName.lowercased())
+            if aFull != bFull { return aFull }
+            return false
+        }.first
+
+        if let match = bestMatch {
+            print("[Interview] Inferred relatedTo: \(person.firstName) → \(match.firstName)")
+            return ExtractedPerson(
+                firstName: person.firstName, middleName: person.middleName,
+                lastName: person.lastName, nickname: person.nickname,
+                birthYear: person.birthYear, birthPlace: person.birthPlace,
+                isLiving: person.isLiving, deathYear: person.deathYear,
+                gender: person.gender, relationships: person.relationships,
+                isComplete: person.isComplete, role: person.role,
+                relatedTo: match.firstName
+            )
+        }
+
+        return person
     }
 
     private func cleanResponse(_ text: String) -> String {
