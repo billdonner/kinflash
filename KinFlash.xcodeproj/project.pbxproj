@@ -21,6 +21,7 @@
 		324A556AE409D36494770F05 /* PersonEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F07B6E5FE5A02EE19AEB8065 /* PersonEditView.swift */; };
 		40C32A4F66F5DDEC7A8FE405 /* SyntheticFamilyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4864554682CC5B09BAD6D7EF /* SyntheticFamilyTests.swift */; };
 		4C15D501FB3B4168F179E0F4 /* FlashcardGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4085A04DED8392B15BB93E91 /* FlashcardGeneratorTests.swift */; };
+		4E4ED44B8CBA16A6716D5230 /* LiveAIDialogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 568ED67519C286AC46045324 /* LiveAIDialogTests.swift */; };
 		5198B9622B10EF8799CFAC95 /* AIProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CA58A3E5394D238B94BB59 /* AIProviderTests.swift */; };
 		58961E5EF76895C1D7B1E055 /* GEDCOMExporterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BFD098F9AAD95C803A8EFF /* GEDCOMExporterTests.swift */; };
 		676B518D511A6DBD6E7540A1 /* TreeContextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7EDF8FCFB080EFD28C8C8B /* TreeContextTests.swift */; };
@@ -113,6 +114,7 @@
 		48BC4F25601770CBB201F9A3 /* InterviewService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewService.swift; sourceTree = "<group>"; };
 		53B0B53CBEC72F5D0AEB8987 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		55BFD098F9AAD95C803A8EFF /* GEDCOMExporterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GEDCOMExporterTests.swift; sourceTree = "<group>"; };
+		568ED67519C286AC46045324 /* LiveAIDialogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveAIDialogTests.swift; sourceTree = "<group>"; };
 		58ED9F2AC880066F14B68616 /* OnboardingFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlow.swift; sourceTree = "<group>"; };
 		60378625111A9F35D74E7525 /* KinFlash.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KinFlash.entitlements; sourceTree = "<group>"; };
 		63DB3761094AF30CF7DD6860 /* Relationship.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Relationship.swift; sourceTree = "<group>"; };
@@ -254,6 +256,7 @@
 				34DC5B5B31994F2DE77F7680 /* InterviewDialogTests.swift */,
 				9D1FFD8157665A5085A9D4EF /* InterviewServiceTests.swift */,
 				3D4FBD6CD6EA8B20520D0009 /* JSONExtractionTests.swift */,
+				568ED67519C286AC46045324 /* LiveAIDialogTests.swift */,
 				E7377B08700925FC3A4185BC /* NicknameAndAgeTests.swift */,
 				11B99C892513E73FCB5FCD5C /* RelationshipResolverTests.swift */,
 				4864554682CC5B09BAD6D7EF /* SyntheticFamilyTests.swift */,
@@ -510,6 +513,7 @@
 				088AB10F65138FF4C6100F6C /* InterviewDialogTests.swift in Sources */,
 				F5907EE0FF3C58DF90F74FC8 /* InterviewServiceTests.swift in Sources */,
 				A7E3C343C0C99C6CF32324BA /* JSONExtractionTests.swift in Sources */,
+				4E4ED44B8CBA16A6716D5230 /* LiveAIDialogTests.swift in Sources */,
 				DD0ED1D40AC57ADF4D1E3EA2 /* NicknameAndAgeTests.swift in Sources */,
 				2D98A9D08112D5697E5F2077 /* RelationshipResolverTests.swift in Sources */,
 				40C32A4F66F5DDEC7A8FE405 /* SyntheticFamilyTests.swift in Sources */,
@@ -664,7 +668,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = KinFlash/KinFlash.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CURRENT_PROJECT_VERSION = 55;
+				CURRENT_PROJECT_VERSION = 56;
 				DEVELOPMENT_TEAM = NEAY582ME4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;
@@ -768,7 +772,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = KinFlash/KinFlash.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CURRENT_PROJECT_VERSION = 55;
+				CURRENT_PROJECT_VERSION = 56;
 				DEVELOPMENT_TEAM = NEAY582ME4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = LaunchBackground;
