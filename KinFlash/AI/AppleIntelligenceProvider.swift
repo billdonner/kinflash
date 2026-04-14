@@ -117,17 +117,36 @@ struct AppleIntelligenceProvider: AIProvider {
             print("[AI] Context trimmed: \(nonSystemMessages.count) → \(trimmed.count) messages")
         }
 
-        // Build context summary from prior user messages (names already given)
-        // and the current user message as the prompt.
-        let userMessages = trimmed.filter { $0.role == .user }
-        let lastUserMsg = userMessages.last?.content ?? "Hello"
+        // Build the user prompt from conversation context.
+        // Include prior turns as a compact summary so the model knows
+        // what's been discussed, but keep it short for 4K token limit.
+        let lastUserMsg = trimmed.last { $0.role == .user }?.content ?? "Hello"
 
-        // Add minimal context: just the user's name (from first message)
+        // Build context from ALL prior turns (not just user messages)
         var context = ""
-        if userMessages.count > 1, let firstName = userMessages.first?.content {
-            let nameParts = firstName.trimmingCharacters(in: .whitespaces).components(separatedBy: " ")
-            let lastName = nameParts.count > 1 ? nameParts.last! : ""
-            context = " User is \(firstName). Family name: \(lastName). Only output NEW people from the current message."
+        let priorTurns = Array(trimmed.dropLast()) // everything before the current user message
+        if !priorTurns.isEmpty {
+            var summaryParts: [String] = []
+            for msg in priorTurns {
+                switch msg.role {
+                case .user:
+                    summaryParts.append("Input: \(msg.content)")
+                case .assistant:
+                    // Only include short assistant summaries, skip JSON blocks
+                    let cleaned = msg.content
+                        .components(separatedBy: "```").first?
+                        .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+                    if !cleaned.isEmpty && cleaned.count < 100 {
+                        summaryParts.append("Response: \(cleaned)")
+                    }
+                case .system:
+                    break
+                }
+            }
+            if !summaryParts.isEmpty {
+                context = " Prior conversation: " + summaryParts.suffix(4).joined(separator: "; ") + "."
+                context += " Only output NEW people from the current message."
+            }
         }
 
         let instructions = systemParts.joined(separator: " ") + context

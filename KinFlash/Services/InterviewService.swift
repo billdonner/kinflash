@@ -220,8 +220,11 @@ struct InterviewService: Sendable {
         // Find the target person to link to
         let target: Person?
         if let relName = relatedTo, !relName.isEmpty {
-            // Look up the person by firstName (case-insensitive)
-            target = try findExistingPerson(firstName: relName, lastName: nil, birthYear: nil)
+            // Look up by firstName. If multiple matches, prefer most recently added.
+            target = try dbQueue.read { db -> Person? in
+                let allPeople = try Person.order(Column("createdAt").desc).fetchAll(db)
+                return allPeople.first { $0.firstName.lowercased() == relName.lowercased() }
+            }
         } else {
             // Default: link to root person
             target = try dbQueue.read { db -> Person? in

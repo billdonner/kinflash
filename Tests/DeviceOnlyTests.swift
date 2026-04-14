@@ -236,16 +236,20 @@ final class DeviceOnlyTests: XCTestCase {
         let service = InterviewService(dbQueue: db.dbQueue, aiProvider: provider)
         let system = AIMessage(role: .system, content: service.testableSystemPrompt)
 
-        // Turn 1: Name
-        let (r1, _) = try await service.processMessage(userMessage: "Jane Doe", conversationHistory: [system])
+        // Turn 1: Name — build conversation history properly
+        var history: [AIMessage] = [system]
+        let (r1, _) = try await service.processMessage(userMessage: "Jane Doe", conversationHistory: history)
         let turn1People = extractAll(from: r1)
         for p in turn1People where p.isPersonComplete {
             _ = try? service.saveExtractedPerson(p)
         }
         print("[DeviceTest] Turn 1: \(turn1People.count) people")
+        // Preserve conversation context for next turn
+        history.append(AIMessage(role: .user, content: "Jane Doe"))
+        history.append(AIMessage(role: .assistant, content: r1))
 
-        // Turn 2: Spouse
-        let (r2, _) = try await service.processMessage(userMessage: "My husband is Bob Doe", conversationHistory: [system])
+        // Turn 2: Spouse — includes turn 1 context
+        let (r2, _) = try await service.processMessage(userMessage: "My husband is Bob Doe", conversationHistory: history)
         let turn2People = extractAll(from: r2)
         for p in turn2People where p.isPersonComplete {
             _ = try? service.saveExtractedPerson(p)

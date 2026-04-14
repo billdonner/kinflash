@@ -224,7 +224,7 @@ struct InterviewView: View {
 
         let userMsg = persistMessage(role: .user, content: text)
         messages.append(userMsg)
-        conversationHistory.append(AIMessage(role: .user, content: text))
+        // Don't append to conversationHistory here — processMessage() does it
 
         isLoading = true
         errorMessage = nil
@@ -281,6 +281,8 @@ struct InterviewView: View {
             }
             let assistantMsg = persistMessage(role: .assistant, content: finalText)
             messages.append(assistantMsg)
+            // Update conversation history with both user + assistant messages
+            conversationHistory.append(AIMessage(role: .user, content: text))
             conversationHistory.append(AIMessage(role: .assistant, content: fullResponse))
             print("[Interview] Display: \(finalText.prefix(120))...")
 
@@ -288,15 +290,30 @@ struct InterviewView: View {
             let allExtracted = extractAllPersonJSON(from: fullResponse)
             print("[Interview] Extracted \(allExtracted.count) person(s)")
 
-            for person in allExtracted where person.isPersonComplete {
-                print("[Interview] Saving: \(person.firstName) \(person.lastName ?? "") role:\(person.role ?? "nil")")
+            // Process "self" blocks FIRST so rootPersonId is set before linking others
+            let selfPeople = allExtracted.filter { $0.role?.lowercased() == "self" && $0.isPersonComplete }
+            let otherPeople = allExtracted.filter { $0.role?.lowercased() != "self" && $0.isPersonComplete }
+
+            for person in selfPeople {
+                print("[Interview] Saving self: \(person.firstName) \(person.lastName ?? "")")
+                do {
+                    let saved = try service.saveExtractedPerson(person)
+                    extractedCount += 1
+                    if appState.rootPersonId == nil {
+                        appState.setRootPerson(saved.id)
+                        print("[Interview] Set root: \(saved.displayName)")
+                    }
+                } catch {
+                    print("[Interview] Save failed: \(error)")
+                }
+            }
+
+            for person in otherPeople {
+                print("[Interview] Saving: \(person.firstName) \(person.lastName ?? "") role:\(person.role ?? "nil") relatedTo:\(person.relatedTo ?? "root")")
                 do {
                     let saved = try service.saveExtractedPerson(person)
                     extractedCount += 1
                     print("[Interview] Saved \(saved.displayName)")
-                    if appState.rootPersonId == nil {
-                        appState.setRootPerson(saved.id)
-                    }
                 } catch {
                     print("[Interview] Save failed: \(error)")
                     errorMessage = "Failed to save: \(error.localizedDescription)"
