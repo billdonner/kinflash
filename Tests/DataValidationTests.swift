@@ -156,17 +156,3 @@ final class DataValidationTests: XCTestCase {
     }
 }
 
-extension TreeServiceError: Equatable {
-    public static func == (lhs: TreeServiceError, rhs: TreeServiceError) -> Bool {
-        switch (lhs, rhs) {
-        case (.selfRelationship, .selfRelationship),
-             (.duplicateRelationship, .duplicateRelationship),
-             (.circularParentChain, .circularParentChain),
-             (.personNotFound, .personNotFound),
-             (.invalidDates, .invalidDates):
-            return true
-        default:
-            return false
-        }
-    }
-}

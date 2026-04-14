@@ -41,7 +41,7 @@ final class InterviewServiceTests: XCTestCase {
             isLiving: true, deathYear: nil, gender: "female",
             relationships: [], isComplete: true
         )
-        let savedMary = try service.saveExtractedPerson(mary)
+        _ = try service.saveExtractedPerson(mary)
 
         // Now save John with a spouse relationship to Mary
         let john = ExtractedPerson(
@@ -53,7 +53,7 @@ final class InterviewServiceTests: XCTestCase {
             ],
             isComplete: true
         )
-        let savedJohn = try service.saveExtractedPerson(john)
+        _ = try service.saveExtractedPerson(john)
 
         // Verify spouse relationship was created (bidirectional = 2 rows)
         let rels = try db.dbQueue.read { database in

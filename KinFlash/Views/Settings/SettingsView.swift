@@ -263,7 +263,7 @@ struct SettingsView: View {
             return
         }
         do {
-            let content = try String(contentsOf: url)
+            let content = try String(contentsOf: url, encoding: .utf8)
             let parser = GEDCOMParser()
             let result = parser.parse(content: content)
             try parser.importToDatabase(result, dbQueue: db.dbQueue)

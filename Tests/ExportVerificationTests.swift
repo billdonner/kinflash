@@ -11,7 +11,7 @@ final class ExportVerificationTests: XCTestCase {
             .deletingLastPathComponent()
             .deletingLastPathComponent()
             .appendingPathComponent("KinFlash/Resources/SampleFamily.ged")
-        let content = try String(contentsOf: gedcomURL)
+        let content = try String(contentsOf: gedcomURL, encoding: .utf8)
         let parser = GEDCOMParser()
         let original = parser.parse(content: content)
 
@@ -202,7 +202,7 @@ final class ExportVerificationTests: XCTestCase {
             .deletingLastPathComponent()
             .deletingLastPathComponent()
             .appendingPathComponent("KinFlash/Resources/SampleFamily.ged")
-        let content = try String(contentsOf: gedcomURL)
+        let content = try String(contentsOf: gedcomURL, encoding: .utf8)
         let parser = GEDCOMParser()
 
         // Round 1

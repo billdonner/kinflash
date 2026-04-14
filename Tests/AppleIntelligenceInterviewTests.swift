@@ -77,7 +77,7 @@ final class AppleIntelligenceInterviewTests: XCTestCase {
             AIMessage(role: .user, content: "1990"),
             AIMessage(role: .assistant, content: r2),
         ]
-        let (_, ex3) = try await service.processMessage(
+        let (_, _) = try await service.processMessage(
             userMessage: "Bob Doe and Alice Doe",
             conversationHistory: history2
         )

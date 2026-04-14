@@ -91,7 +91,7 @@ final class TreeContextTests: XCTestCase {
             .deletingLastPathComponent()
             .deletingLastPathComponent()
             .appendingPathComponent("KinFlash/Resources/SampleFamily.ged")
-        let content = try String(contentsOf: gedcomURL)
+        let content = try String(contentsOf: gedcomURL, encoding: .utf8)
         let parser = GEDCOMParser()
         let result = parser.parse(content: content)
         try parser.importToDatabase(result, dbQueue: db.dbQueue)
@@ -110,7 +110,7 @@ final class TreeContextTests: XCTestCase {
             .deletingLastPathComponent()
             .deletingLastPathComponent()
             .appendingPathComponent("KinFlash/Resources/SampleFamily.ged")
-        let content = try String(contentsOf: gedcomURL)
+        let content = try String(contentsOf: gedcomURL, encoding: .utf8)
         let parser = GEDCOMParser()
         let result = parser.parse(content: content)
         try parser.importToDatabase(result, dbQueue: db.dbQueue)
@@ -296,7 +296,7 @@ final class TreeContextTests: XCTestCase {
 
         // Then save spouse
         let spouse = ExtractedPerson(firstName: "Partner", lastName: "Test", role: "spouse")
-        let savedSpouse = try service.saveExtractedPerson(spouse)
+        _ = try service.saveExtractedPerson(spouse)
 
         let rels = try db.dbQueue.read { database in
             try Relationship.filter(Column("type") == "spouse").fetchAll(database)

@@ -260,7 +260,7 @@ struct InterviewView: View {
             // Use chat() not chatStream() — the on-device model is fast enough
             // (<2s) and chat() preserves the system prompt context correctly.
             // Streaming caused the model to lose instructions and hallucinate.
-            let (fullResponse, firstExtracted) = try await service.processMessage(
+            let (fullResponse, _) = try await service.processMessage(
                 userMessage: text,
                 conversationHistory: conversationHistory
             )
